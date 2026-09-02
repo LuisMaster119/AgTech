@@ -61,6 +61,27 @@ async def create_farm(
 
 
 @router.get(
+    "",
+    response_model=List[FarmResponse],
+    summary="Listar todas las granjas",
+    description="Recupera la lista de todas las granjas registradas en Firestore ordenadas cronológicamente."
+)
+async def list_farms(
+    db: firestore.Client = Depends(get_db)
+):
+    try:
+        query = db.collection("farms").order_by("fechaCreacion", direction=firestore.Query.DESCENDING)
+        docs = list(query.stream())
+    except Exception as e:
+        logger.warning(f"Error en consulta ordenada de granjas ({e}), consultando sin orden y ordenando en memoria...")
+        docs = list(db.collection("farms").stream())
+        docs.sort(key=lambda d: d.to_dict().get("fechaCreacion", ""), reverse=True)
+
+    farms = [FarmResponse(**d.to_dict()) for d in docs if d.exists]
+    return farms
+
+
+@router.get(
     "/{farm_id}",
     response_model=FarmResponse,
     summary="Obtener detalles de una granja",

@@ -1,5 +1,7 @@
+import os
 import logging
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.routers import farms_router
@@ -54,6 +56,14 @@ async def health_check():
         "firestore_database": settings.FIRESTORE_DATABASE_ID,
         "version": "1.0.0"
     }
+
+
+# Montaje de archivos estáticos del frontend
+frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
+if not os.path.exists(frontend_dir):
+    os.makedirs(frontend_dir, exist_ok=True)
+
+app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
 
 
 if __name__ == "__main__":

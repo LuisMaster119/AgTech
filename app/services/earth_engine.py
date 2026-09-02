@@ -1,5 +1,4 @@
-"""Servicio de integración con Google Earth Engine para análisis satelital multitemporal (Sentinel-2)."""
-
+import json
 import logging
 import os
 from datetime import date, timedelta
@@ -14,25 +13,46 @@ _ee_initialized = False
 
 
 def initialize_earth_engine():
-    """Inicializa la API de Earth Engine usando Application Default Credentials (ADC)."""
+    """Inicializa la API de Earth Engine utilizando explícitamente las credenciales de Service Account
+
+    leídas desde el archivo JSON especificado en GOOGLE_APPLICATION_CREDENTIALS.
+    """
     global _ee_initialized
     if not _ee_initialized:
-        logger.info("Inicializando conexión con Google Earth Engine...")
+        logger.info("Inicializando conexión con Google Earth Engine vía Service Account...")
+        key_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or settings.GOOGLE_APPLICATION_CREDENTIALS
+        
+        if not key_path:
+            raise RuntimeError(
+                "Variable de entorno GOOGLE_APPLICATION_CREDENTIALS no está configurada."
+            )
+        
+        if not os.path.exists(key_path):
+            raise FileNotFoundError(
+                f"No se encontró el archivo de credenciales de la Service Account en la ruta: {key_path}"
+            )
+
         try:
-            # Inicializar con credenciales del entorno
-            ee.Initialize()
+            with open(key_path, "r", encoding="utf-8") as f:
+                key_data = json.load(f)
+            
+            client_email = key_data.get("client_email")
+            project_id = key_data.get("project_id")
+
+            if not client_email:
+                raise ValueError(
+                    f"El archivo de credenciales '{key_path}' no contiene el campo obligatorio 'client_email'."
+                )
+
+            logger.info(f"Autenticando en Earth Engine con Service Account: {client_email} (Proyecto: {project_id})")
+            credentials = ee.ServiceAccountCredentials(client_email, key_path)
+            ee.Initialize(credentials=credentials, project=project_id)
+            
             _ee_initialized = True
-            logger.info("Google Earth Engine inicializado exitosamente.")
+            logger.info("Google Earth Engine inicializado exitosamente con ServiceAccountCredentials.")
         except Exception as e:
-            logger.warning(f"No se pudo inicializar EE con Initialize estándar ({e}), intentando con autenticación explícita...")
-            try:
-                # Intento alternativo si se requiere proyecto explícito
-                ee.Initialize(project=os.environ.get("GOOGLE_CLOUD_PROJECT", "AgTech"))
-                _ee_initialized = True
-                logger.info("Google Earth Engine inicializado con proyecto explícito.")
-            except Exception as e2:
-                logger.error(f"Error crítico al inicializar Google Earth Engine: {e2}")
-                raise RuntimeError(f"Error de autenticación con Google Earth Engine: {e2}")
+            logger.error(f"Error al inicializar Google Earth Engine con Service Account: {e}")
+            raise RuntimeError(f"Error de autenticación con Google Earth Engine: {e}")
 
 
 def mask_s2_clouds(image: ee.Image) -> ee.Image:
