@@ -1,0 +1,126 @@
+/* Micrositio público: lee perfil y análisis almacenado, nunca los modifica. */
+document.addEventListener('DOMContentLoaded', () => {
+  const $ = id => document.getElementById(id);
+  const farmId = new URLSearchParams(window.location.search).get('id')?.trim();
+  const text = (id, value) => { $(id).textContent = value; };
+  const number = value => typeof value === 'number' && Number.isFinite(value)
+    ? value.toLocaleString('es-MX', { maximumFractionDigits: 4 }) : 'No disponible';
+  const period = value => value?.inicio && value?.fin ? `${value.inicio} — ${value.fin}` : 'No disponible';
+  let mapInitialized = false;
+
+  function showState(title, copy, retry = false) {
+    text('state-title', title);
+    text('state-copy', copy);
+    $('parcel-state').hidden = false;
+    $('parcel-retry').hidden = !retry;
+  }
+
+  function showMap(farm) {
+    try {
+      if (!window.L) throw new Error('Mapa no disponible');
+      if (!mapInitialized) {
+        MapModule.init('map', null, { readOnly: true });
+        mapInitialized = true;
+      }
+      MapModule.clearDrawnLayers();
+      const polygon = L.geoJSON(farm.geojson, {
+        style: { color: '#a1f4c8', fillColor: '#116c4a', fillOpacity: .4, weight: 3 }
+      });
+      if (!polygon.getBounds().isValid()) throw new Error('Sin geometría');
+      MapModule.drawnItems.addLayer(polygon);
+      MapModule.map.invalidateSize();
+      MapModule.map.fitBounds(polygon.getBounds(), { padding: [35, 35], maxZoom: 17 });
+      text('map-status', 'Polígono registrado de la parcela.');
+    } catch (error) {
+      text('map-status', 'No pudimos mostrar el mapa o la geometría. El resto de la información sigue disponible.');
+    }
+  }
+
+  function showProfile(farm) {
+    document.title = `${farm.nombre} · TerraSync AgTech`;
+    text('parcel-name', farm.nombre);
+    text('parcel-producer', farm.productor ? `Productor: ${farm.productor}` : 'Productor no disponible');
+    text('parcel-activity', farm.actividadEconomica || 'Actividad económica no disponible');
+    text('parcel-story', farm.historia || 'La historia de esta parcela todavía no está disponible.');
+    $('demo-label').hidden = !farm.esDemostracion;
+    $('parcel-location').replaceChildren();
+    for (const [label, key] of [['Ciudad', 'ciudad'], ['Municipio', 'municipio'], ['Estado', 'estado'], ['País', 'pais']]) {
+      const dt = document.createElement('dt');
+      const dd = document.createElement('dd');
+      dt.textContent = label;
+      dd.textContent = farm[key] || 'No disponible';
+      $('parcel-location').append(dt, dd);
+    }
+    text('location-attribution', farm.ubicacionAtribucion || '');
+    $('location-attribution').hidden = !farm.ubicacionAtribucion;
+    $('parcel-state').hidden = true;
+    $('parcel-content').hidden = false;
+    showMap(farm);
+  }
+
+  async function loadAnalysis() {
+    $('analysis-content').hidden = true;
+    $('analysis-retry').hidden = true;
+    document.querySelector('.analysis-section').setAttribute('aria-busy', 'true');
+    text('analysis-status', 'Consultando el análisis almacenado…');
+    try {
+      const analysis = await API.getFarmAnalysis(farmId);
+      if (!analysis || analysis.farmId !== farmId) throw new Error('Respuesta inválida');
+      text('analysis-score', `${number(analysis.score)}${typeof analysis.score === 'number' ? ' / 100' : ''}`);
+      text('analysis-risk', `Riesgo ecológico: ${analysis.nivelRiesgo || 'No disponible'}`);
+      const date = analysis.fechaCreacion ? new Date(analysis.fechaCreacion) : null;
+      text('analysis-date', date && !Number.isNaN(date.getTime())
+        ? `Análisis registrado el ${date.toLocaleDateString('es-MX')}` : 'Fecha del análisis no disponible');
+      text('analysis-summary', analysis.resumenEjecutivo || 'Resumen no disponible.');
+      text('reference-period', `Periodo de referencia: ${period(analysis.periodoReferencia)}`);
+      text('recent-period', `Periodo reciente: ${period(analysis.periodoReciente)}`);
+      $('indices-body').replaceChildren();
+      for (const index of ['ndvi', 'ndmi', 'ndbi']) {
+        const row = document.createElement('tr');
+        const heading = document.createElement('th');
+        heading.scope = 'row';
+        heading.textContent = index.toUpperCase();
+        row.append(heading);
+        for (const [range, area] of [['referencia', 'granja'], ['reciente', 'granja'], ['referencia', 'buffer'], ['reciente', 'buffer']]) {
+          const cell = document.createElement('td');
+          cell.textContent = number(analysis.indices?.[range]?.[`${index}_${area}`]);
+          row.append(cell);
+        }
+        $('indices-body').append(row);
+      }
+      $('analysis-content').hidden = false;
+      text('analysis-status', 'Resultados del último análisis almacenado.');
+    } catch (error) {
+      text('analysis-status', error.status === 404 ? 'No hay un análisis disponible para esta parcela.'
+        : 'No pudimos consultar el análisis. Puedes seguir consultando la información de la parcela.');
+      $('analysis-retry').hidden = error.status === 404;
+    } finally {
+      document.querySelector('.analysis-section').setAttribute('aria-busy', 'false');
+    }
+  }
+
+  async function load() {
+    $('parcel-main').setAttribute('aria-busy', 'true');
+    $('parcel-content').hidden = true;
+    showState('Cargando parcela…', 'Consultando su información pública.');
+    try {
+      const farm = await API.getFarm(farmId);
+      if (!farm || farm.farmId !== farmId || !farm.nombre) throw new Error('Respuesta inválida');
+      showProfile(farm);
+      // Fallos del análisis no impiden consultar el perfil.
+      loadAnalysis();
+    } catch (error) {
+      showState(error.status === 404 ? 'Parcela no encontrada' : 'No pudimos cargar la parcela',
+        error.status === 404 ? 'Revisa el enlace o vuelve al catálogo para elegir otra parcela.'
+          : 'Revisa tu conexión e inténtalo de nuevo.', error.status !== 404);
+    } finally {
+      $('parcel-main').setAttribute('aria-busy', 'false');
+    }
+  }
+  $('parcel-retry').addEventListener('click', load);
+  $('analysis-retry').addEventListener('click', loadAnalysis);
+  if (!farmId || farmId.includes('/') || farmId === '.' || farmId === '..') {
+    showState('Enlace de parcela incompleto', 'Vuelve al catálogo y selecciona una parcela.');
+    $('parcel-main').setAttribute('aria-busy', 'false');
+  } else load();
+});

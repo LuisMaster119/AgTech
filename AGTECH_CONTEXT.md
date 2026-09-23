@@ -353,8 +353,9 @@ el controlador anterior de dibujo, registro y análisis. Sus módulos permanecen
 en el repositorio para etapas posteriores; no se agregó una ruta administrativa.
 
 Se contemplan carga, catálogo vacío, búsqueda sin resultados, error y reintento.
-Los accesos a micrositio y login muestran avisos de próxima disponibilidad;
-no hay aún navegación a un micrositio implementado ni autenticación.
+Las tarjetas enlazan al micrositio implementado en la etapa siguiente.
+El acceso de proveedor todavía muestra un aviso de próxima disponibilidad;
+no hay autenticación.
 Las pruebas de navegador usan respuestas simuladas sin escribir en Firestore.
 
 Frontend:
@@ -367,6 +368,24 @@ Frontend:
 No implementar todavía autenticación funcional.
 
 ### 3. parcel-microsite
+
+Estado implementado en código (septiembre de 2026): cada tarjeta ofrece
+«Conocer parcela», que abre `/parcela.html?id=<farmId>`. El enlace permite
+acceso directo y recarga. La página consulta `GET /farms/{farm_id}` y muestra
+nombre, productor, historia, actividad, ubicación y polígono en el mapa de
+solo lectura, manteniendo la identidad visual del catálogo y el regreso a él.
+
+Consulta el último análisis guardado mediante el endpoint existente
+`GET /farms/{farm_id}/certificate`, mostrando score, riesgo, fecha, periodos,
+resumen e índices de parcela y entorno. No genera análisis ni certificados,
+no presenta sellos y no modifica cálculos. Un 404 de análisis se muestra como
+ausencia de resultados; otros errores permiten reintentar sin ocultar el perfil.
+Se contemplan enlace sin ID, parcela inexistente, perfil antiguo, datos
+faltantes y fallos de mapa. Las lecturas tienen un timeout de 15 segundos.
+
+Verificación: navegador en escritorio y móvil con respuestas de prueba,
+regresión del catálogo y suite Python. No equivale a validar datos reales
+de Firestore ni a repetir los casos ambientales de Bacalar.
 
 Frontend:
 - detalle público;

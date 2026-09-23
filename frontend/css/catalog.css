@@ -16,6 +16,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid var(--primary); border-radius: 9px; padding: 12px 18px; background: var(--primary); color: white; font-weight: 700; font-size: 13px; }
 .button:hover { background: var(--forest); color: white; }
 .outline { background: transparent; color: var(--primary); }
+a.button { text-decoration: none; }
 .hero { display: flex; justify-content: space-between; align-items: center; gap: 40px; padding: 65px 0 60px; }
 .eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: var(--secondary); margin: 0 0 13px; }
 h1 { font-size: clamp(38px, 5vw, 66px); line-height: 1.08; letter-spacing: -3px; margin: 0 0 22px; font-weight: 800; }

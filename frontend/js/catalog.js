@@ -121,10 +121,9 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
     const mapButton = element('button', 'Ver en mapa', 'button');
     mapButton.setAttribute('aria-label', `Ver ${farm.nombre} en mapa`);
     mapButton.addEventListener('click', () => selectFarm(farm));
-    const profileButton = element('button', 'Micrositio · Próximamente', 'button outline');
-    profileButton.setAttribute('aria-label', `Micrositio de ${farm.nombre}, próximamente`);
-    profileButton.addEventListener('click', () => notice(farm.nombre,
-      'El micrositio de esta parcela estará disponible próximamente. Por ahora puedes consultar sus datos públicos y localizarla en el mapa.'));
+    const profileButton = element('a', 'Conocer parcela →', 'button outline');
+    profileButton.setAttribute('aria-label', `Conocer ${farm.nombre}`);
+    profileButton.href = `/parcela.html?id=${encodeURIComponent(farm.farmId)}`;
     actions.append(mapButton, profileButton);
     article.append(heading, body, actions);
     return article;

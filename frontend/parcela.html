@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parcela · TerraSync AgTech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="/css/catalog.css">
+  <link rel="stylesheet" href="/css/parcel.css">
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/map.js"></script>
+  <script defer src="/js/parcel.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#parcel-main">Ir a la parcela</a>
+  <header class="site-header"><a class="brand" href="/"><span class="brand-mark material-symbols-outlined" aria-hidden="true">eco</span><span>TerraSync<small>AGTECH · CONECTADOS A LA TIERRA</small></span></a><a class="button outline" href="/">← Volver al catálogo</a></header>
+  <main id="parcel-main" aria-busy="true">
+    <div id="parcel-state" class="state-box" role="status"><h1 id="state-title">Cargando parcela…</h1><p id="state-copy">Consultando su información pública.</p><button id="parcel-retry" class="button" hidden>Reintentar</button></div>
+    <article id="parcel-content" hidden>
+      <section class="parcel-hero"><p class="eyebrow">HISTORIAS DEL TERRITORIO</p><span id="demo-label" class="demo-badge" hidden>Parcela de demostración · Datos ficticios</span><h1 id="parcel-name"></h1><p id="parcel-producer" class="hero-copy"></p><p id="parcel-activity"></p></section>
+      <div class="profile-grid">
+        <section class="profile-panel" aria-labelledby="story-title"><p class="eyebrow">SU ORIGEN</p><h2 id="story-title">La historia de esta parcela</h2><p id="parcel-story" class="story"></p></section>
+        <section class="profile-panel" aria-labelledby="location-title"><p class="eyebrow">DÓNDE CRECE</p><h2 id="location-title">Ubicación</h2><dl id="parcel-location" class="location-list"></dl><p id="location-attribution" class="attribution" hidden></p></section>
+      </div>
+      <section class="map-section" aria-labelledby="map-title"><div class="section-heading"><h2 id="map-title">La parcela en el territorio</h2><span class="map-tag">Mapa de consulta</span></div><p id="map-status" role="status"></p><div id="map" aria-label="Polígono de la parcela"></div></section>
+      <section class="analysis-section" aria-labelledby="analysis-title"><p class="eyebrow">INFORMACIÓN AMBIENTAL</p><h2 id="analysis-title">Último análisis disponible</h2><p id="analysis-status" role="status">Consultando el análisis almacenado…</p><button id="analysis-retry" class="button outline" hidden>Reintentar consulta del análisis</button>
+        <div id="analysis-content" hidden><div class="analysis-summary"><div><span class="metric-label">Score ecológico</span><p id="analysis-score" class="score"></p><span id="analysis-risk"></span></div><div><p id="analysis-date"></p><p id="analysis-summary"></p></div></div>
+          <div class="periods"><p id="reference-period"></p><p id="recent-period"></p></div>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Comparación de índices espectrales"><table><caption>Índices registrados · Parcela y entorno de 500 m</caption><thead><tr><th scope="col">Índice</th><th scope="col">Parcela referencia</th><th scope="col">Parcela reciente</th><th scope="col">Entorno referencia</th><th scope="col">Entorno reciente</th></tr></thead><tbody id="indices-body"></tbody></table></div>
+          <p class="analysis-note">Pre-evaluación técnica basada en imágenes satelitales. No constituye una certificación oficial ni acredita automáticamente cumplimiento regulatorio.</p>
+        </div>
+      </section>
+    </article>
+  </main>
+  <footer><a class="brand" href="/">TerraSync <small>AGTECH</small></a><p>Historias que nacen de la tierra.</p></footer>
+  <noscript><p class="state-box">Activa JavaScript para consultar la información de esta parcela.</p></noscript>
+</body>
+</html>

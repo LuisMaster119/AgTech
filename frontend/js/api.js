@@ -6,6 +6,31 @@
 const API_BASE = window.location.origin;
 
 const API = {
+  // Lecturas del micrositio; conservan el estado HTTP para distinguir ausencia y fallo.
+  async readPublic(path) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    try {
+      const response = await fetch(`${API_BASE}${path}`, {
+        method: 'GET', headers: { Accept: 'application/json' }, signal: controller.signal
+      });
+      if (!response.ok) {
+        const error = new Error('No se pudo consultar la información pública');
+        error.status = response.status;
+        throw error;
+      }
+      return await response.json();
+    } finally {
+      clearTimeout(timeout);
+    }
+  },
+  getFarm(farmId) {
+    return this.readPublic(`/farms/${encodeURIComponent(farmId)}`);
+  },
+  getFarmAnalysis(farmId) {
+    // El endpoint existente devuelve el último análisis almacenado; no genera uno.
+    return this.readPublic(`/farms/${encodeURIComponent(farmId)}/certificate`);
+  },
   /**
    * Crea una nueva granja en Firestore a partir del nombre y la geometría GeoJSON.
    * @param {string} nombre - Nombre del predio

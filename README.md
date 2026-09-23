@@ -5,8 +5,8 @@
 La portada `/` es el catálogo público TerraSync: tarjetas con datos de `GET /farms`,
 búsqueda sin distinguir acentos y filtros combinados por estado y actividad.
 Los polígonos se muestran en el mapa satelital existente en modo de consulta.
-No permite crear parcelas ni ejecutar análisis. Los accesos a micrositio y
-proveedor avisan que estarán disponibles próximamente. No se generan datos de
+No permite crear parcelas ni ejecutar análisis. «Conocer parcela» abre el
+micrositio público; el acceso de proveedor sigue pendiente. No se generan datos de
 demostración en el navegador: para verlos hay que cargar las semillas manualmente.
 
 La página usa Plus Jakarta Sans, JetBrains Mono y Material Symbols desde Google
@@ -28,6 +28,24 @@ La prueba de navegador intercepta `/farms` con datos de prueba. Cubre filtros,
 registros antiguos, contenido tratado como texto, avisos, selección, ancho móvil,
 vacío, error y reintento; verifica que no haya solicitudes de escritura. La carga
 real del mapa depende del acceso a los servicios externos.
+
+### Micrositio público
+
+Cada tarjeta enlaza a `/parcela.html?id=<farmId>`, accesible directamente y al
+recargar. Consulta el perfil mediante `GET /farms/{farm_id}` y muestra historia,
+productor, actividad, ubicación y polígono. No requiere sesión.
+
+El último análisis se consulta con `GET /farms/{farm_id}/certificate`, sin
+modificar su contrato ni ejecutar análisis nuevos. Se muestran score, riesgo,
+fecha, resumen, periodos y los índices registrados. No se implementan sellos
+ni generación de certificados. La ausencia de análisis (404) se distingue de
+un fallo de consulta; los errores permiten reintentar. Los datos incompletos
+se indican explícitamente, sin valores inventados. El perfil permanece visible
+cuando el análisis o el mapa no están disponibles.
+
+Prueba adicional con el servidor de pruebas anterior en 8010:
+`node tests/parcel.browser.cjs`. Usa respuestas simuladas y comprueba navegación,
+mapa, resultados, vista móvil, errores, datos antiguos y ausencia de escrituras.
 
 `POST /farms` sigue aceptando únicamente `nombre` y `geojson` (Polygon o Feature
 con Polygon). También acepta `providerId`, `productor`, `historia`,
