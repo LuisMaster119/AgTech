@@ -1,13 +1,15 @@
-/* Adaptador de sesión demo. Sustituible por Firebase Auth; no usa contraseñas. */
+/* Adaptador de sesión demo con credenciales ficticias públicas. */
 window.ProviderAuth = {
   key: 'agtech.demo.session',
   token() { return sessionStorage.getItem(this.key); },
-  async request(path, method = 'GET') {
+  async request(path, method = 'GET', body = undefined) {
     const token = this.token();
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 15000);
     try {
-      const response = await fetch(path, { method, headers: token ? { Authorization: `Bearer ${token}` } : {},
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      if (body !== undefined) headers['Content-Type'] = 'application/json';
+      const response = await fetch(path, { method, headers, body: body === undefined ? undefined : JSON.stringify(body),
         cache: 'no-store', signal: controller.signal });
       if (!response.ok) {
         if (response.status === 401) sessionStorage.removeItem(this.key);
@@ -18,10 +20,10 @@ window.ProviderAuth = {
       return response.status === 204 ? null : await response.json();
     } finally { clearTimeout(timer); }
   },
-  async signIn() {
+  async signIn(email, password) {
     // Revocar una sesión previa antes de sustituirla.
     if (this.token()) await this.signOut();
-    const session = await this.request('/auth/demo/session', 'POST');
+    const session = await this.request('/auth/demo/session', 'POST', { email, password });
     sessionStorage.setItem(this.key, session.accessToken);
   },
   currentProvider() { return this.request('/providers/me'); },

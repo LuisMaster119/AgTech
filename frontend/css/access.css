@@ -6,4 +6,6 @@
 .access-card p { overflow-wrap: anywhere; }
 button:disabled { opacity: .6; cursor: wait; }
 #access-status { color: var(--muted); }
+#login-form label { display: block; margin-top: 18px; font-weight: 600; }
+#login-form .button { width: 100%; }
 @media (max-width: 640px) { .access-card { padding: 24px; } .access-card h1 { font-size: 30px; } }

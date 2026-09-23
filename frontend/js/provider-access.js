@@ -10,14 +10,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     : 'No pudimos conectar con el servidor. Inténtalo de nuevo.';
 
   if (login) {
-    login.addEventListener('click', async () => {
+    document.getElementById('login-form').addEventListener('submit', async event => {
+      event.preventDefault();
       login.disabled = true;
       status.textContent = 'Abriendo sesión de demostración…';
       try {
-        await auth.signIn();
+        await auth.signIn(document.getElementById('login-email').value.trim(), document.getElementById('login-password').value);
         window.location.assign('/proveedor.html');
-      } catch (error) { status.textContent = errorText(error); }
-      finally { login.disabled = false; }
+      } catch (error) { status.textContent = error.status === 401
+        ? 'Correo o contraseña incorrectos. Usa las credenciales de demostración indicadas.' : errorText(error); }
+      finally { login.disabled = false; document.getElementById('login-password').value = ''; }
     });
     return;
   }

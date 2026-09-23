@@ -51,8 +51,8 @@ mapa, resultados, vista móvil, errores, datos antiguos y ausencia de escrituras
 
 En `.env`, configurar `DEMO_AUTH_ENABLED=true` y reiniciar Uvicorn. Por defecto
 está desactivado. Desde el catálogo, «Iniciar sesión como proveedor» abre
-`/acceso.html`; «Entrar como proveedor demo» abre la sesión de una cooperativa
-ficticia y permite cerrarla en `/proveedor.html`. No solicita contraseñas ni
+`/acceso.html`; el formulario «Iniciar sesión» abre la sesión de una cooperativa
+ficticia y permite cerrarla en `/proveedor.html`. Solo acepta el correo público `proveedor@demo.test` y la contraseña ficticia `demo123`. No
 verifica identidades; cualquiera puede entrar. No usarlo para proteger datos reales.
 
 Los tokens aleatorios vencen en una hora, residen en memoria del servidor y se
@@ -62,7 +62,7 @@ recuperar la pestaña y cada minuto. El backend verifica el vencimiento en cada
 consulta protegida. El adaptador `frontend/js/auth.js` queda separado para
 sustituirlo por Firebase Auth.
 
-- `POST /auth/demo/session`: iniciar sesión demo, sin credenciales.
+- `POST /auth/demo/session`: iniciar sesión con JSON `{"email":"proveedor@demo.test","password":"demo123"}`. Credenciales incorrectas: 401; cuerpo ausente: 422. Sustituye expresamente el acceso demo anterior sin campos.
 - `GET /providers/me`: requiere `Authorization: Bearer <token>` vigente.
 - `DELETE /auth/demo/session`: revocar el token; cierre idempotente.
 

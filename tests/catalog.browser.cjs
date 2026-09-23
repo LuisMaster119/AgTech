@@ -40,7 +40,7 @@ const assert = require('node:assert/strict');
     await page.getByRole('button', { name: 'Limpiar filtros' }).click();
     await page.waitForFunction(() => document.querySelectorAll('.parcel-card').length === 3);
     await page.getByRole('button', { name: 'Iniciar sesión como proveedor' }).click();
-    await page.getByRole('button', { name: 'Entrar como proveedor demo' }).waitFor();
+    await page.getByRole('button', { name: 'Iniciar sesión', exact: true }).waitFor();
     await page.getByRole('link', { name: '← Volver al catálogo' }).click();
     await page.locator('.parcel-card').first().waitFor();
     assert.equal(await page.getByRole('link', { name: 'Conocer Milpa de demostración' }).getAttribute('href'), '/parcela.html?id=demo');

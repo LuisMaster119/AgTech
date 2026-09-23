@@ -399,10 +399,10 @@ No implementar el motor de sellos.
 ### 4. provider-login
 
 Estado implementado en código (septiembre de 2026): por elección explícita del
-usuario, acceso simulado para el MVP. `/acceso.html` ofrece entrar sin correo ni
-contraseña como `demo-provider-001`. Todos usan el mismo proveedor ficticio.
+usuario, acceso simulado para el MVP. `/acceso.html` ofrece un formulario de correo y
+contraseña con las credenciales públicas `proveedor@demo.test` / `demo123`, validadas en el backend. Sin ellas no se crea sesión. Todos entran como `demo-provider-001`, el mismo proveedor ficticio.
 `/proveedor.html` valida la sesión con `GET /providers/me`, muestra su nombre
-y permite cerrar sesión; «Mis parcelas» sigue pendiente.
+y confirma «Sesión iniciada correctamente», permitiendo cerrar sesión; «Mis parcelas» sigue pendiente.
 
 La sesión demo se crea con `POST /auth/demo/session` y se revoca con
 `DELETE /auth/demo/session`. Se usan tokens aleatorios almacenados en memoria

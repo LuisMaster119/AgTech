@@ -5,6 +5,7 @@ from threading import Lock
 
 from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel, Field
 
 from app.config import settings
 from app.models.provider import Provider
@@ -14,6 +15,15 @@ bearer = HTTPBearer(auto_error=False)
 _sessions: dict[str, float] = {}
 _lock = Lock()
 SESSION_SECONDS = 3600
+DEMO_EMAIL = "proveedor@demo.test"
+DEMO_PASSWORD = "demo123"
+
+
+class DemoLogin(BaseModel):
+    email: str = Field(min_length=1, max_length=254)
+    password: str = Field(min_length=1, max_length=128)
+
+
 DEMO_PROVIDER = Provider(providerId="demo-provider-001", nombrePublico="Cooperativa Demo TerraSync",
                          fechaCreacion="2026-09-01T00:00:00+00:00", esDemostracion=True)
 
@@ -35,7 +45,9 @@ def require_provider(credentials: HTTPAuthorizationCredentials | None = Depends(
 
 
 @router.post("/auth/demo/session", dependencies=[Depends(require_demo_enabled)])
-def create_demo_session(response: Response):
+def create_demo_session(response: Response, credentials: DemoLogin):
+    if credentials.email.strip().lower() != DEMO_EMAIL or credentials.password != DEMO_PASSWORD:
+        raise HTTPException(401, "Correo o contraseña de demostración incorrectos.")
     now = time.time()
     with _lock:
         for token, expiry in list(_sessions.items()):
