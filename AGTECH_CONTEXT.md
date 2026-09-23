@@ -319,7 +319,8 @@ público requiere un solo worker y respetar su límite de consumo total.
 ficticias marcadas como demostración. No ejecuta análisis ni sobrescribe
 documentos existentes. No implica que las semillas hayan sido cargadas en nube.
 Se mantienen los registros antiguos sin migración obligatoria. Autenticación,
-administración del proveedor y frontend siguen pendientes.
+administración del proveedor siguen pendientes; el catálogo público se describe
+en la siguiente etapa.
 
 Backend:
 - modelo de proveedor;
@@ -339,6 +340,22 @@ Excluir:
 - modificaciones del análisis.
 
 ### 2. public-catalog
+
+Estado implementado en código (septiembre de 2026): `/` muestra el catálogo
+público TerraSync/AgTech con tarjetas conectadas a `GET /farms`, búsqueda por
+nombre, productor, actividad y ubicación sin distinguir acentos, filtros
+combinables por estado y actividad, y etiquetas de demostración. Los registros
+antiguos muestran mensajes de información no disponible.
+
+Se reutiliza el mapa Leaflet/Esri existente en modo de solo lectura, con
+polígonos filtrados y selección desde mapa o tarjeta. La portada ya no carga
+el controlador anterior de dibujo, registro y análisis. Sus módulos permanecen
+en el repositorio para etapas posteriores; no se agregó una ruta administrativa.
+
+Se contemplan carga, catálogo vacío, búsqueda sin resultados, error y reintento.
+Los accesos a micrositio y login muestran avisos de próxima disponibilidad;
+no hay aún navegación a un micrositio implementado ni autenticación.
+Las pruebas de navegador usan respuestas simuladas sin escribir en Firestore.
 
 Frontend:
 - catálogo público;

@@ -16,7 +16,7 @@ const MapModule = {
    * @param {string} containerId - ID del elemento contenedor (#map)
    * @param {Function} onPolygonCreated - Callback ejecutado al cerrar un polígono
    */
-  init(containerId = 'map', onPolygonCreated = null) {
+  init(containerId = 'map', onPolygonCreated = null, { readOnly = false } = {}) {
     this.onPolygonCreatedCallback = onPolygonCreated;
 
     // Centro por defecto: Región Central de México (lat: 20.5, lng: -99.5), Zoom: 6
@@ -55,6 +55,9 @@ const MapModule = {
     // FeatureGroup para almacenar las capas dibujadas
     this.drawnItems = new L.FeatureGroup();
     this.map.addLayer(this.drawnItems);
+
+    // El catálogo reutiliza el mapa sin cargar ni activar Leaflet.draw.
+    if (readOnly) return;
 
     // Configuración del objeto de dibujo de polígono con estilos visuales esmeralda
     const polygonOptions = {

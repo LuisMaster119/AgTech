@@ -2,6 +2,33 @@
 
 ## Perfiles públicos de parcelas
 
+La portada `/` es el catálogo público TerraSync: tarjetas con datos de `GET /farms`,
+búsqueda sin distinguir acentos y filtros combinados por estado y actividad.
+Los polígonos se muestran en el mapa satelital existente en modo de consulta.
+No permite crear parcelas ni ejecutar análisis. Los accesos a micrositio y
+proveedor avisan que estarán disponibles próximamente. No se generan datos de
+demostración en el navegador: para verlos hay que cargar las semillas manualmente.
+
+La página usa Plus Jakarta Sans, JetBrains Mono y Material Symbols desde Google
+Fonts, Leaflet desde su CDN y las capas Esri existentes. Si el mapa no carga,
+las tarjetas y filtros siguen disponibles. Los módulos anteriores de dibujo y
+análisis permanecen en el repositorio, pero no se cargan en la portada pública.
+
+Pruebas del catálogo:
+
+```powershell
+node --test tests/catalog.test.cjs
+# Con Playwright y Microsoft Edge disponibles, iniciar primero el servidor:
+.\venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8010
+# En otra terminal:
+node tests/catalog.browser.cjs
+```
+
+La prueba de navegador intercepta `/farms` con datos de prueba. Cubre filtros,
+registros antiguos, contenido tratado como texto, avisos, selección, ancho móvil,
+vacío, error y reintento; verifica que no haya solicitudes de escritura. La carga
+real del mapa depende del acceso a los servicios externos.
+
 `POST /farms` sigue aceptando únicamente `nombre` y `geojson` (Polygon o Feature
 con Polygon). También acepta `providerId`, `productor`, `historia`,
 `actividadEconomica`, `ciudad`, `municipio`, `estado` y `pais`, todos opcionales.

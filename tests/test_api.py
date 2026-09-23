@@ -20,6 +20,10 @@ def test_static_frontend_served():
     assert response.status_code == 200
     assert "AgTech" in response.text
     assert "map" in response.text
+    assert "catalog-search" in response.text
+    assert '/js/catalog.js' in response.text
+    assert '/js/app.js' not in response.text
+    assert 'leaflet.draw' not in response.text
 
 
 def test_create_farm_mocked_db():
@@ -261,4 +265,3 @@ def test_get_certificate_mocked():
     assert "validez" in data
 
     app.dependency_overrides.clear()
-
