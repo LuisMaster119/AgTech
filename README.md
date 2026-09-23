@@ -69,7 +69,25 @@ sustituirlo por Firebase Auth.
 La plantilla HTML es pública y no contiene información privada. Los endpoints
 existentes de parcelas y análisis mantienen sus contratos y permisos; este
 cambio no los protege. La sesión no escribe en Firestore y usa el mismo ID
-`demo-provider-001` que las semillas. «Mis parcelas» se implementará después.
+`demo-provider-001` que las semillas. Después del login se abre «Mis parcelas».
+
+### Mis parcelas
+
+`/proveedor.html` consulta `GET /providers/me/farms` con el token de sesión.
+El backend filtra por el proveedor de la sesión y devuelve únicamente sus
+parcelas, de más reciente a más antigua. No acepta seleccionar otro proveedor
+por parámetros. Las parcelas antiguas sin `providerId` siguen en el catálogo
+público pero no se asignan automáticamente al proveedor demo.
+
+El listado permite desplegar datos y abrir el perfil público con el análisis
+disponible. Incluye carga, vacío, errores y reintento. «Agregar parcela» avisa
+que el alta mediante dibujo corresponde al siguiente paso; no crea registros.
+Si no hay parcelas asociadas a `demo-provider-001`, el listado estará vacío.
+Para datos ficticios puede ejecutarse manualmente la carga de semillas descrita
+abajo; esta etapa no las carga automáticamente.
+
+Prueba del dashboard: con servidor en 8010 y Playwright/Edge disponibles,
+`node tests/dashboard.browser.cjs`. Los datos se simulan sin escribir en Firestore.
 
 Prueba de navegador: iniciar el servidor con demo habilitado en puerto 8011 y
 ejecutar `node tests/auth.browser.cjs` con Playwright y Edge disponibles.

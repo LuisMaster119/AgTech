@@ -33,7 +33,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('provider-name').textContent = provider.nombrePublico;
       content.hidden = false;
       status.textContent = '';
+      document.dispatchEvent(new CustomEvent('provider-ready', { detail: provider }));
     } catch (error) {
+      document.dispatchEvent(new Event('provider-unavailable'));
       if (error.status === 401) { window.location.replace('/acceso.html'); return; }
       status.textContent = errorText(error);
       retry.hidden = false;

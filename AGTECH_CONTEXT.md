@@ -319,7 +319,7 @@ público requiere un solo worker y respetar su límite de consumo total.
 ficticias marcadas como demostración. No ejecuta análisis ni sobrescribe
 documentos existentes. No implica que las semillas hayan sido cargadas en nube.
 Se mantienen los registros antiguos sin migración obligatoria. Autenticación real y
-administración del proveedor siguen pendientes; el catálogo público se describe
+alta y edición del proveedor siguen pendientes; el catálogo público se describe
 en la siguiente etapa.
 
 Backend:
@@ -402,7 +402,7 @@ Estado implementado en código (septiembre de 2026): por elección explícita de
 usuario, acceso simulado para el MVP. `/acceso.html` ofrece un formulario de correo y
 contraseña con las credenciales públicas `proveedor@demo.test` / `demo123`, validadas en el backend. Sin ellas no se crea sesión. Todos entran como `demo-provider-001`, el mismo proveedor ficticio.
 `/proveedor.html` valida la sesión con `GET /providers/me`, muestra su nombre
-y confirma «Sesión iniciada correctamente», permitiendo cerrar sesión; «Mis parcelas» sigue pendiente.
+y permite cerrar sesión; ahora contiene «Mis parcelas», descrito en la etapa 5.
 
 La sesión demo se crea con `POST /auth/demo/session` y se revoca con
 `DELETE /auth/demo/session`. Se usan tokens aleatorios almacenados en memoria
@@ -421,7 +421,7 @@ persistentes al entrar. El ID coincide con el de las semillas existentes.
 
 Verificado con pruebas de sesiones ausentes, inválidas, vencidas, cierre y modo
 desactivado, y navegador con el backend demo real en memoria. No se implementan
-autenticación Firebase, registro de usuarios, dashboard ni alta de parcelas.
+autenticación Firebase, registro de usuarios ni alta de parcelas en esta etapa.
 
 - Login de proveedor.
 - Sesión.
@@ -430,6 +430,22 @@ autenticación Firebase, registro de usuarios, dashboard ni alta de parcelas.
 - Mecanismo sustituible por Firebase Auth si se utiliza simulación.
 
 ### 5. provider-dashboard
+
+Implementado: `/proveedor.html` muestra «Mis parcelas» después del login mock.
+`GET /providers/me/farms` exige sesión vigente y consulta Firestore filtrando
+`providerId` por la identidad de la sesión, nunca por un parámetro del cliente.
+Ordena por fecha descendente y reutiliza el esquema de respuesta de parcelas.
+Los registros sin proveedor o de otro proveedor no se incluyen ni se reasignan.
+
+Cada parcela tiene información desplegable de productor, actividad, ubicación
+e historia, con enlace al perfil público y su análisis disponible. Se muestran
+datos faltantes, carga, listado vacío y errores con reintento. Una sesión vencida
+redirige al formulario. El botón «Agregar parcela · Próximamente» explica que
+el dibujo y registro se implementarán en la etapa 6; no ejecuta escrituras.
+
+Verificado con 37 pruebas Python y prueba de navegador con datos simulados en
+escritorio y móvil. No se cargaron semillas ni se modificaron datos de Firestore.
+El acceso sigue siendo una demostración, no autenticación real.
 
 - Mis parcelas.
 - Listado de parcelas propias.

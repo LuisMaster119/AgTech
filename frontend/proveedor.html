@@ -3,18 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sesión de proveedor · TerraSync AgTech</title>
+<title>Mis parcelas · TerraSync AgTech</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/catalog.css">
 <link rel="stylesheet" href="/css/access.css">
 <script defer src="/js/auth.js"></script>
-<script defer src="/js/provider-access.js"></script>
+<script defer src="/js/provider-dashboard.js"></script><script defer src="/js/provider-access.js"></script><link rel="stylesheet" href="/css/provider.css">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="/">TerraSync<small>AGTECH</small></a><a class="button outline" href="/">← Volver al catálogo</a></header>
-<main class="access-page"><section class="access-card"><p class="eyebrow">ESPACIO DEL PROVEEDOR</p><h1>Acceso de proveedor</h1><div id="provider-content" hidden><h2 id="provider-name"></h2><div class="demo-notice"><strong>Sesión iniciada correctamente</strong><p>Este acceso no es autenticación real. La sesión dura una hora y se conserva en esta pestaña; reiniciar el servidor la invalida.</p></div><p>Ya entraste como proveedor de demostración. El panel «Mis parcelas» todavía no está implementado; por ahora puedes volver al catálogo o cerrar sesión.</p><button id="demo-logout" class="button">Cerrar sesión</button></div><button id="session-retry" class="button outline" hidden>Reintentar</button><p id="access-status" role="status" aria-live="polite"></p></section></main>
+<main class="dashboard"><p class="eyebrow">ESPACIO DEL PROVEEDOR</p><h1>Mis parcelas</h1><p id="access-status" role="status" aria-live="polite"></p><button id="session-retry" class="button outline" hidden>Reintentar sesión</button>
+<div id="provider-content" hidden><div class="dashboard-toolbar"><h2 id="provider-name"></h2><div class="dashboard-actions"><button id="add-parcel" class="button">Agregar parcela · Próximamente</button><button id="demo-logout" class="button outline">Cerrar sesión</button></div></div>
+<div class="demo-notice"><strong>Sesión de demostración</strong><p>Estás consultando las parcelas asociadas al proveedor ficticio. Este acceso no es autenticación real.</p></div>
+<p id="farms-status" role="status" aria-live="polite">Cargando tus parcelas…</p><button id="farms-retry" class="button outline" hidden>Reintentar carga de parcelas</button><div id="provider-farms" aria-busy="true"></div></div></main>
+<dialog id="add-notice" aria-labelledby="add-title"><form method="dialog"><h2 id="add-title">Agregar parcela</h2><p>El registro de parcelas mediante dibujo en el mapa estará disponible en el siguiente paso.</p><button class="button">Entendido</button></form></dialog>
 <footer><a class="brand" href="/">TerraSync <small>AGTECH</small></a><p>Historias que nacen de la tierra.</p></footer>
 <noscript><p class="state-box">Activa JavaScript para utilizar la sesión de demostración.</p></noscript>
 </body>

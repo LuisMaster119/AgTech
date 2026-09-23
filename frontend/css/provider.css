@@ -1,0 +1,17 @@
+.dashboard { padding-block: 40px 60px; min-height: 70vh; }
+.dashboard h1 { font-size: 44px; letter-spacing: -2px; margin-bottom: 12px; }
+.dashboard-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 25px 0; }
+.dashboard-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+#provider-name { font-size: 20px; }
+.provider-farm { background: white; border: 1px solid var(--border); border-radius: 14px; margin-top: 16px; overflow: hidden; }
+.provider-farm summary { padding: 24px; cursor: pointer; }
+.provider-farm summary:focus-visible { outline: 3px solid var(--secondary); outline-offset: -4px; }
+.provider-farm-name { font-size: 18px; font-weight: 700; overflow-wrap: anywhere; }
+.expand-label { float: right; color: var(--secondary); font-size: 12px; }
+.provider-farm-body { padding: 0 24px 24px; }
+.provider-farm-body dl { display: grid; grid-template-columns: 140px 1fr; gap: 10px; }
+.provider-farm-body dt { color: var(--muted); }
+.provider-farm-body dd { margin: 0; overflow-wrap: anywhere; }
+.farm-story { white-space: pre-wrap; overflow-wrap: anywhere; }
+#farms-status { color: var(--muted); }
+@media (max-width: 640px) { .dashboard-toolbar { align-items: flex-start; flex-direction: column; } .dashboard h1 { font-size: 36px; } .expand-label { display: block; float: none; margin-top: 12px; } .provider-farm summary { padding: 18px; } .provider-farm-body { padding: 0 18px 18px; } .provider-farm-body dl { grid-template-columns: 1fr; gap: 5px; } .provider-farm-body dd { margin-bottom: 10px; } }
