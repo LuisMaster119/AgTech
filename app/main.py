@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.routers import farms_router
+from app.routers.auth import router as auth_router
 
 # Configuración de logging
 logging.basicConfig(
@@ -41,6 +42,7 @@ app.add_middleware(
 
 # Registro de rutas
 app.include_router(farms_router)
+app.include_router(auth_router)
 
 
 @app.get(

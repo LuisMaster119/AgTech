@@ -6,7 +6,7 @@ La portada `/` es el catálogo público TerraSync: tarjetas con datos de `GET /f
 búsqueda sin distinguir acentos y filtros combinados por estado y actividad.
 Los polígonos se muestran en el mapa satelital existente en modo de consulta.
 No permite crear parcelas ni ejecutar análisis. «Conocer parcela» abre el
-micrositio público; el acceso de proveedor sigue pendiente. No se generan datos de
+micrositio público; el acceso de proveedor ofrece una sesión simulada. No se generan datos de
 demostración en el navegador: para verlos hay que cargar las semillas manualmente.
 
 La página usa Plus Jakarta Sans, JetBrains Mono y Material Symbols desde Google
@@ -46,6 +46,36 @@ cuando el análisis o el mapa no están disponibles.
 Prueba adicional con el servidor de pruebas anterior en 8010:
 `node tests/parcel.browser.cjs`. Usa respuestas simuladas y comprueba navegación,
 mapa, resultados, vista móvil, errores, datos antiguos y ausencia de escrituras.
+
+### Acceso de proveedor de demostración
+
+En `.env`, configurar `DEMO_AUTH_ENABLED=true` y reiniciar Uvicorn. Por defecto
+está desactivado. Desde el catálogo, «Iniciar sesión como proveedor» abre
+`/acceso.html`; «Entrar como proveedor demo» abre la sesión de una cooperativa
+ficticia y permite cerrarla en `/proveedor.html`. No solicita contraseñas ni
+verifica identidades; cualquiera puede entrar. No usarlo para proteger datos reales.
+
+Los tokens aleatorios vencen en una hora, residen en memoria del servidor y se
+conservan en `sessionStorage` durante la pestaña. Reiniciar el servidor invalida
+las sesiones; usar un solo worker. La pantalla revalida la sesión al recargar,
+recuperar la pestaña y cada minuto. El backend verifica el vencimiento en cada
+consulta protegida. El adaptador `frontend/js/auth.js` queda separado para
+sustituirlo por Firebase Auth.
+
+- `POST /auth/demo/session`: iniciar sesión demo, sin credenciales.
+- `GET /providers/me`: requiere `Authorization: Bearer <token>` vigente.
+- `DELETE /auth/demo/session`: revocar el token; cierre idempotente.
+
+La plantilla HTML es pública y no contiene información privada. Los endpoints
+existentes de parcelas y análisis mantienen sus contratos y permisos; este
+cambio no los protege. La sesión no escribe en Firestore y usa el mismo ID
+`demo-provider-001` que las semillas. «Mis parcelas» se implementará después.
+
+Prueba de navegador: iniciar el servidor con demo habilitado en puerto 8011 y
+ejecutar `node tests/auth.browser.cjs` con Playwright y Edge disponibles.
+`AUTH_TEST_URL` permite cambiar la dirección. La prueba usa el backend de sesiones
+real en memoria, sin escribir en Firestore. Las pruebas Python se ejecutan con
+`.\venv\Scripts\python.exe -m pytest -q`.
 
 `POST /farms` sigue aceptando únicamente `nombre` y `geojson` (Polygon o Feature
 con Polygon). También acepta `providerId`, `productor`, `historia`,

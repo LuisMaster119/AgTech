@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sesión de proveedor · TerraSync AgTech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/catalog.css">
+<link rel="stylesheet" href="/css/access.css">
+<script defer src="/js/auth.js"></script>
+<script defer src="/js/provider-access.js"></script>
+</head>
+<body>
+<header class="site-header"><a class="brand" href="/">TerraSync<small>AGTECH</small></a><a class="button outline" href="/">← Volver al catálogo</a></header>
+<main class="access-page"><section class="access-card"><p class="eyebrow">ESPACIO DEL PROVEEDOR</p><h1>Acceso de proveedor</h1><div id="provider-content" hidden><h2 id="provider-name"></h2><div class="demo-notice"><strong>Sesión de demostración</strong><p>Este acceso no es autenticación real. La sesión dura una hora y se conserva en esta pestaña; reiniciar el servidor la invalida.</p></div><p>El área «Mis parcelas» estará disponible en el siguiente paso.</p><button id="demo-logout" class="button">Cerrar sesión</button></div><button id="session-retry" class="button outline" hidden>Reintentar</button><p id="access-status" role="status" aria-live="polite"></p></section></main>
+<footer><a class="brand" href="/">TerraSync <small>AGTECH</small></a><p>Historias que nacen de la tierra.</p></footer>
+<noscript><p class="state-box">Activa JavaScript para utilizar la sesión de demostración.</p></noscript>
+</body>
+</html>

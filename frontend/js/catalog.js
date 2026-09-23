@@ -177,7 +177,6 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
   $('filters').addEventListener('change', render);
   $('filters').addEventListener('reset', () => setTimeout(render, 0));
   $('retry').addEventListener('click', load);
-  $('provider-login').addEventListener('click', () => notice('Acceso de proveedores',
-    'El inicio de sesión estará disponible próximamente. Puedes explorar el catálogo sin crear una cuenta.'));
+  $('provider-login').addEventListener('click', () => { window.location.href = '/acceso.html'; });
   load();
 });

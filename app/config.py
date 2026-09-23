@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     FIRESTORE_DATABASE_ID: str = "ag-tech"
     PORT: int = 8000
     HOST: str = "0.0.0.0"
+    DEMO_AUTH_ENABLED: bool = False
     # Activación explícita para evitar enviar coordenadas sin configurar el servicio.
     GEOCODING_ENABLED: bool = False
     GEOCODING_URL: str = "https://nominatim.openstreetmap.org/reverse"

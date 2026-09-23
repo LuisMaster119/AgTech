@@ -318,7 +318,7 @@ público requiere un solo worker y respetar su límite de consumo total.
 `python -m scripts.seed_demo` crea manualmente un proveedor y dos parcelas
 ficticias marcadas como demostración. No ejecuta análisis ni sobrescribe
 documentos existentes. No implica que las semillas hayan sido cargadas en nube.
-Se mantienen los registros antiguos sin migración obligatoria. Autenticación,
+Se mantienen los registros antiguos sin migración obligatoria. Autenticación real y
 administración del proveedor siguen pendientes; el catálogo público se describe
 en la siguiente etapa.
 
@@ -354,8 +354,8 @@ en el repositorio para etapas posteriores; no se agregó una ruta administrativa
 
 Se contemplan carga, catálogo vacío, búsqueda sin resultados, error y reintento.
 Las tarjetas enlazan al micrositio implementado en la etapa siguiente.
-El acceso de proveedor todavía muestra un aviso de próxima disponibilidad;
-no hay autenticación.
+El acceso de proveedor enlaza al login de demostración de la etapa 4;
+no hay autenticación real.
 Las pruebas de navegador usan respuestas simuladas sin escribir en Firestore.
 
 Frontend:
@@ -397,6 +397,31 @@ Frontend:
 No implementar el motor de sellos.
 
 ### 4. provider-login
+
+Estado implementado en código (septiembre de 2026): por elección explícita del
+usuario, acceso simulado para el MVP. `/acceso.html` ofrece entrar sin correo ni
+contraseña como `demo-provider-001`. Todos usan el mismo proveedor ficticio.
+`/proveedor.html` valida la sesión con `GET /providers/me`, muestra su nombre
+y permite cerrar sesión; «Mis parcelas» sigue pendiente.
+
+La sesión demo se crea con `POST /auth/demo/session` y se revoca con
+`DELETE /auth/demo/session`. Se usan tokens aleatorios almacenados en memoria
+del servidor, con vencimiento de una hora, y `sessionStorage` en el navegador.
+Las sesiones se pierden al reiniciar el servidor; usar un solo worker.
+El adaptador frontend `ProviderAuth` y la dependencia backend `require_provider`
+mantienen separado el mecanismo para su futura sustitución por Firebase Auth.
+
+`DEMO_AUTH_ENABLED` está desactivado por defecto; se activó en el `.env` local
+para esta demostración. El endpoint `/providers/me` exige sesión vigente; el
+HTML es una plantilla pública sin datos privados que redirige al acceso si no
+hay sesión. Esto no constituye protección real: cualquiera puede iniciar una
+sesión demo. Los endpoints anteriores de parcelas y análisis no cambian sus
+permisos en esta etapa. No se escribe en Firestore ni se crean proveedores
+persistentes al entrar. El ID coincide con el de las semillas existentes.
+
+Verificado con pruebas de sesiones ausentes, inválidas, vencidas, cierre y modo
+desactivado, y navegador con el backend demo real en memoria. No se implementan
+autenticación Firebase, registro de usuarios, dashboard ni alta de parcelas.
 
 - Login de proveedor.
 - Sesión.
