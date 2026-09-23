@@ -38,7 +38,23 @@ class GeoJSONPolygon(BaseModel):
         return coords
 
 
-class FarmCreate(BaseModel):
+class FarmProfile(BaseModel):
+    productor: str | None = Field(default=None, max_length=150)
+    historia: str | None = Field(default=None, max_length=5000)
+    actividadEconomica: str | None = Field(default=None, max_length=250)
+    ciudad: str | None = Field(default=None, max_length=150)
+    municipio: str | None = Field(default=None, max_length=150)
+    estado: str | None = Field(default=None, max_length=150)
+    pais: str | None = Field(default=None, max_length=150)
+
+    @field_validator("productor", "historia", "actividadEconomica", "ciudad", "municipio", "estado", "pais", mode="before")
+    @classmethod
+    def normalize_optional_text(cls, value):
+        return (value.strip() or None) if isinstance(value, str) else value
+
+
+class FarmCreate(FarmProfile):
+    providerId: str | None = Field(default=None, min_length=1, max_length=150, pattern=r"^[^/]+$")
     nombre: str = Field(..., min_length=2, max_length=150, description="Nombre de la granja o predio agrícola")
     geojson: Union[GeoJSONPolygon, Dict[str, Any]] = Field(
         ...,
@@ -67,7 +83,10 @@ class FarmCreate(BaseModel):
         raise ValueError("Estructura GeoJSON inválida.")
 
 
-class FarmResponse(BaseModel):
+class FarmResponse(FarmProfile):
+    # Lista explícita de campos públicos; providerId y datos internos se excluyen.
+    esDemostracion: bool = False
+    ubicacionAtribucion: str | None = None
     farmId: str = Field(..., description="ID único de la granja")
     nombre: str = Field(..., description="Nombre de la granja")
     geojson: Dict[str, Any] = Field(..., description="Geometría GeoJSON del polígono")

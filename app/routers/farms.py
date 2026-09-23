@@ -19,6 +19,7 @@ from app.models.analysis import (
 )
 from app.services.earth_engine import analyze_farm_satellite_data
 from app.services.scoring import calculate_ecological_score
+from app.services.geocoding import enrich_location
 
 logger = logging.getLogger("agtech.routers.farms")
 
@@ -40,11 +41,18 @@ async def create_farm(
     fecha_creacion = datetime.now(timezone.utc).isoformat()
 
     farm_data = {
+        **farm_in.model_dump(),
         "farmId": farm_id,
         "nombre": farm_in.nombre,
         "geojson": farm_in.geojson,
         "fechaCreacion": fecha_creacion
     }
+
+    if farm_in.providerId is not None:
+        provider = db.collection("providers").document(farm_in.providerId).get()
+        if not provider.exists:
+            raise HTTPException(status_code=422, detail="El proveedor indicado no existe.")
+    await enrich_location(farm_data)
 
     try:
         # Guardar en la colección 'farms' con ID como clave de documento

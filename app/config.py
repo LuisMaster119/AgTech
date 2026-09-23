@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 
 
 class Settings(BaseSettings):
@@ -8,6 +9,11 @@ class Settings(BaseSettings):
     FIRESTORE_DATABASE_ID: str = "ag-tech"
     PORT: int = 8000
     HOST: str = "0.0.0.0"
+    # Activación explícita para evitar enviar coordenadas sin configurar el servicio.
+    GEOCODING_ENABLED: bool = False
+    GEOCODING_URL: str = "https://nominatim.openstreetmap.org/reverse"
+    GEOCODING_USER_AGENT: str = "AgTech/1.0"
+    GEOCODING_TIMEOUT_SECONDS: float = Field(default=5.0, gt=0, le=30)
 
     model_config = SettingsConfigDict(
         env_file=".env",

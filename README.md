@@ -1,5 +1,70 @@
 # AgTech — Certificación de Impacto Ecológico Agrícola vía Imágenes Satelitales 🛰️🌱
 
+## Perfiles públicos de parcelas
+
+`POST /farms` sigue aceptando únicamente `nombre` y `geojson` (Polygon o Feature
+con Polygon). También acepta `providerId`, `productor`, `historia`,
+`actividadEconomica`, `ciudad`, `municipio`, `estado` y `pais`, todos opcionales.
+Si se proporciona `providerId`, debe existir en `providers`; de lo contrario
+responde 422. La relación no prueba identidad ni concede autorización.
+
+`GET /farms` devuelve un arreglo ordenado por fecha descendente y
+`GET /farms/{farm_id}` devuelve el detalle (404 si no existe). Ambos son públicos
+y de solo lectura: incluyen los cuatro campos anteriores de respuesta
+(`farmId`, `nombre`, `geojson`, `fechaCreacion`), los campos del perfil,
+`esDemostracion` y `ubicacionAtribucion`. No exponen `providerId` ni campos
+adicionales internos del documento. Los registros antiguos siguen siendo legibles;
+los datos nuevos faltantes aparecen como null y `esDemostracion` como false.
+No hay nuevos estados de publicación ni autenticación en esta etapa.
+
+El modelo `Provider` contiene `providerId`, `nombrePublico`, `fechaCreacion`
+y `esDemostracion`. No se añadieron endpoints de administración de proveedores.
+
+### Ubicación opcional
+
+Para activar Nominatim, configurar en `.env`:
+
+```env
+GEOCODING_ENABLED=true
+GEOCODING_URL=https://nominatim.openstreetmap.org/reverse
+GEOCODING_USER_AGENT=AgTech/1.0 (contacto: correo-del-responsable)
+GEOCODING_TIMEOUT_SECONDS=5
+```
+
+Está desactivado por defecto. Al activarlo se envía el primer vértice válido del
+perímetro al servicio; es una referencia aproximada, no una determinación catastral.
+Solo se completan campos faltantes durante la creación. No se sobrescriben datos
+manuales ni se rellenan registros antiguos al consultarlos. Se aceptan resultados
+parciales; errores HTTP, timeout o JSON inválido no impiden guardar la parcela.
+`municipality` se usa para municipio; no se asume que `county` sea equivalente.
+
+Se mantiene una caché de hasta 256 consultas por proceso y como máximo una solicitud
+por segundo por proceso. Usar **un único worker** con el servicio público y coordinar
+el consumo total con cualquier otro cliente; para escalar, configurar una instancia
+propia o un servicio con límites apropiados. Al mostrar datos derivados, conservar
+la atribución `© OpenStreetMap contributors (ODbL)` incluida en la respuesta.
+Referencias: [API inversa de Nominatim](https://nominatim.org/release-docs/latest/api/Reverse/)
+y [política del servicio](https://operations.osmfoundation.org/policies/nominatim/).
+
+### Semillas de demostración
+
+Ejecutar manualmente desde la raíz, con credenciales Firestore configuradas:
+
+```powershell
+.\venv\Scripts\python.exe -m scripts.seed_demo
+```
+
+Usa la base configurada (`ag-tech` por defecto). Crea un proveedor y dos parcelas
+ficticias con identificadores `demo-*` y `esDemostracion=true`. Sus nombres, historias,
+actividades, ubicación y polígonos son ejemplos, no perfiles verificados.
+No consulta geocodificación ni Earth Engine. Repetir la carga no duplica registros;
+una colisión con un documento distinto detiene la carga sin sobrescribirlo.
+La carga no es transaccional: si falla puede repetirse y continuar con los faltantes.
+No se ejecuta automáticamente al arrancar la aplicación.
+
+Pruebas locales: `.\venv\Scripts\python.exe -m pytest -q`. Las pruebas usan
+Firestore y geocodificación simulados; no acreditan conectividad con servicios reales.
+
 Backend y pipeline de análisis geoespacial satelital para la **pre-evaluación de impacto ecológico** en predios agrícolas, diseñado para apoyar procesos de certificación de exportación.
 
 ---
