@@ -7,6 +7,8 @@ from google.cloud import firestore
 
 from app.database import get_db
 from app.models.farm import FarmCreate, FarmResponse
+from app.models.seal import SealEvaluation
+from app.services.seals import evaluate_profile
 from app.models.analysis import (
     AnalyzeRequest,
     AnalysisResponse,
@@ -107,6 +109,19 @@ async def get_farm(
             detail=f"Granja con ID '{farm_id}' no encontrada."
         )
     return FarmResponse(**doc.to_dict())
+
+
+@router.get("/{farm_id}/seal", response_model=SealEvaluation,
+            summary="Consultar evaluación preliminar del perfil")
+async def get_farm_seal(farm_id: str, db: firestore.Client = Depends(get_db)):
+    try:
+        doc = db.collection("farms").document(farm_id).get()
+    except Exception:
+        logger.exception("No se pudo consultar el perfil para su evaluación")
+        raise HTTPException(status_code=503, detail="No se pudo consultar la evaluación.")
+    if not doc.exists:
+        raise HTTPException(status_code=404, detail="Parcela no encontrada.")
+    return evaluate_profile(farm_id, doc.to_dict())
 
 
 @router.post(

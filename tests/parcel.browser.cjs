@@ -8,11 +8,19 @@ const assert = require('node:assert/strict');
     const errors = [], writes = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('request', request => { if (request.url().includes('/farms') && request.method() !== 'GET') writes.push(request.url()); });
-    let profileMode = 'full', analysisMode = 'full', analysisRequests = 0;
+    let profileMode = 'full', analysisMode = 'full', analysisRequests = 0, sealMode = 'full';
     const farm = { farmId: 'demo', nombre: 'Milpa de demostración', productor: 'María López', historia: 'Tres generaciones cultivando la tierra.\nUna historia de demostración.', actividadEconomica: 'Cultivo de maíz', ciudad: 'Bacalar', municipio: 'Bacalar', estado: 'Quintana Roo', pais: 'México', esDemostracion: true,
       geojson: { type: 'Polygon', coordinates: [[[-88.40, 18.70], [-88.39, 18.70], [-88.39, 18.71], [-88.40, 18.70]]] } };
     const analysis = { farmId: 'demo', score: 0, nivelRiesgo: 'Alto', fechaCreacion: '2026-09-01T12:00:00Z', resumenEjecutivo: 'Resultado de prueba para verificar la visualización.', periodoReferencia: { inicio: '2024-01-01', fin: '2024-06-30' }, periodoReciente: { inicio: '2026-01-01', fin: '2026-06-30' }, indices: { referencia: { ndvi_granja: .7, ndvi_buffer: .75, ndmi_granja: .2, ndmi_buffer: .3, ndbi_granja: -.2, ndbi_buffer: -.3 }, reciente: { ndvi_granja: 0, ndvi_buffer: .74, ndmi_granja: -.1, ndmi_buffer: .2, ndbi_granja: .2, ndbi_buffer: -.2 } } };
     await page.route('**/farms', route => route.fulfill({ json: [farm] }));
+    await page.route('**/farms/demo/seal', route => route.fulfill({ status: sealMode === 'error' ? 503 : 200, json: {
+      farmId: 'demo', estado: profileMode === 'old' ? 'faltan_datos' : 'cumple', esDemostracion: profileMode !== 'old',
+      versionCriterios: 'perfil-base-1.0', fechaEvaluacion: '2026-09-23T12:00:00Z',
+      alcance: 'Comprueba presencia de información; no constituye certificación oficial.',
+      criterios: ['Nombre de parcela', 'Productor', 'Historia', 'Actividad económica', 'Municipio', 'Estado', 'País', 'Polígono con estructura válida']
+        .map(descripcion => ({ descripcion, cumple: profileMode !== 'old' })),
+      nivelesPendientes: ['Nivel II Export · Pendiente de revisión', 'Élite Regenerativo · Pendiente de revisión']
+    } }));
     await page.route('**/farms/demo', route => {
       const status = profileMode === 'missing' ? 404 : profileMode === 'error' ? 500 : 200;
       const body = profileMode === 'old' ? { farmId: 'demo', nombre: '<img src=x onerror=alert(1)>', geojson: {} } : farm;
@@ -25,6 +33,11 @@ const assert = require('node:assert/strict');
     await page.goto('http://127.0.0.1:8010/');
     await page.getByRole('link', { name: 'Conocer Milpa de demostración' }).click();
     await page.locator('#analysis-content:not([hidden])').waitFor();
+    await page.locator('#seal-content:not([hidden])').waitFor();
+    assert.equal(await page.locator('#seal-status').textContent(), 'Nivel I Base · Perfil documentado');
+    assert.match(await page.locator('#seal-demo').textContent(), /Caso de demostración/);
+    assert.equal(await page.locator('#seal-pending li').count(), 2);
+    assert.equal(await page.locator('#seal-criteria li').count(), 8);
     assert.equal(await page.locator('#parcel-name').textContent(), farm.nombre);
     assert.equal(await page.locator('#analysis-score').textContent(), '0 / 100');
     assert.equal(await page.locator('#indices-body tr').count(), 3);
@@ -51,6 +64,15 @@ const assert = require('node:assert/strict');
     await page.getByText('Productor no disponible', { exact: true }).waitFor();
     assert.equal(await page.locator('#parcel-name img').count(), 0);
     assert.equal(await page.locator('#demo-label').isVisible(), false);
+    await page.getByText('Nivel I Base · Faltan datos', { exact: true }).waitFor();
+    assert.equal(await page.locator('#seal-demo').isVisible(), false);
+    sealMode = 'error';
+    await page.reload();
+    await page.locator('#seal-retry:not([hidden])').waitFor();
+    assert.equal(await page.locator('#parcel-name').isVisible(), true);
+    sealMode = 'full';
+    await page.locator('#seal-retry').click();
+    await page.locator('#seal-content:not([hidden])').waitFor();
     profileMode = 'missing';
     const previous = analysisRequests;
     await page.reload();

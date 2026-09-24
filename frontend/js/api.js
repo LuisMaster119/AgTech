@@ -31,6 +31,9 @@ const API = {
     // El endpoint existente devuelve el último análisis almacenado; no genera uno.
     return this.readPublic(`/farms/${encodeURIComponent(farmId)}/certificate`);
   },
+  getFarmSeal(farmId) {
+    return this.readPublic(`/farms/${encodeURIComponent(farmId)}/seal`);
+  },
   /**
    * Crea una nueva granja en Firestore a partir del nombre y la geometría GeoJSON.
    * @param {string} nombre - Nombre del predio

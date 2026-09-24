@@ -292,8 +292,7 @@ Reglas:
   acreditación global o neutralidad de carbono como verificadas
   sin criterios y evidencia definidos.
 
-El motor de sellos y la ampliación de certificados corresponden
-a cambios posteriores. Preservar el endpoint existente.
+El Nivel I Base comprueba completitud del perfil (etapa 7). Export y Regenerativo siguen pendientes; la ampliación de certificados corresponde a un cambio posterior. Preservar el endpoint existente.
 
 ## 13. Orden de implementación
 
@@ -378,7 +377,7 @@ solo lectura, manteniendo la identidad visual del catálogo y el regreso a él.
 Consulta el último análisis guardado mediante el endpoint existente
 `GET /farms/{farm_id}/certificate`, mostrando score, riesgo, fecha, periodos,
 resumen e índices de parcela y entorno. No genera análisis ni certificados,
-no presenta sellos y no modifica cálculos. Un 404 de análisis se muestra como
+la evaluación del perfil se incorpora en la etapa 7 y no modifica cálculos. Un 404 de análisis se muestra como
 ausencia de resultados; otros errores permiten reintentar sin ocultar el perfil.
 Se contemplan enlace sin ID, parcela inexistente, perfil antiguo, datos
 faltantes y fallos de mapa. Las lecturas tienen un timeout de 15 segundos.
@@ -489,6 +488,30 @@ No se escribieron parcelas de prueba en Firestore ni se ejecutó Earth Engine.
 GeoJSON y KML quedan como extensiones posteriores.
 
 ### 7. seal-engine
+
+Implementado: evaluación preliminar de Nivel I Base «Perfil documentado» mediante
+`GET /farms/{farm_id}/seal`, sin escrituras ni cambios en contratos anteriores.
+Comprueba presencia de nombre, productor, historia, actividad económica, municipio,
+estado, país y estructura de un Polygon cerrado, con coordenadas finitas en rango
+y anillos no degenerados. No verifica topología, catastro, veracidad ni titularidad.
+Ciudad es opcional. Devuelve criterios individuales, cumple/faltan_datos, versión
+`perfil-base-1.0` y fecha de consulta; no emite ni almacena certificados.
+El score ambiental no interviene. Export y Regenerativo aparecen como niveles
+previstos pendientes de criterios, evidencia y revisión, nunca otorgados.
+
+El micrositio muestra la evaluación y sus faltantes, con errores recuperables.
+Los perfiles demo se presentan como «Caso de demostración» y su evaluación como
+«Evaluación preliminar AgTech» con datos de ejemplo. Esta marca describe el perfil,
+no determina la procedencia de un análisis satelital almacenado. No se agregan
+resultados ambientales ficticios. El acceso se denomina «Acceso de demostración»
+y conserva el aviso de que no es autenticación real.
+
+Verificación: 49 pruebas Python con base de datos sustituida por mocks; casos de
+perfil completo, antiguo, faltantes, geometría inválida, independencia del score,
+lecturas sin escrituras y errores. No se repitieron los casos reales de Bacalar.
+Prueba del micrositio en Edge: criterios, marca demo, perfil antiguo, error y
+reintento de evaluación, análisis separado y ancho móvil, con respuestas de prueba.
+
 
 - Definir criterios verificables para los sellos.
 - Relacionar resultados existentes con los niveles.

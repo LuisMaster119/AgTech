@@ -58,6 +58,39 @@ document.addEventListener('DOMContentLoaded', () => {
     showMap(farm);
   }
 
+  async function loadSeal() {
+    $('seal-content').hidden = true;
+    $('seal-retry').hidden = true;
+    text('seal-status', 'Consultando la evaluación del perfil…');
+    try {
+      const evaluation = await API.getFarmSeal(farmId);
+      if (evaluation.farmId !== farmId || !['cumple', 'faltan_datos'].includes(evaluation.estado)
+        || !Array.isArray(evaluation.criterios)) throw new Error('Respuesta inválida');
+      text('seal-status', evaluation.estado === 'cumple'
+        ? 'Nivel I Base · Perfil documentado' : 'Nivel I Base · Faltan datos');
+      text('seal-demo', evaluation.esDemostracion ? 'Caso de demostración · Evaluación con datos de ejemplo' : '');
+      $('seal-demo').hidden = !evaluation.esDemostracion;
+      text('seal-scope', evaluation.alcance);
+      text('seal-version', `Criterios ${evaluation.versionCriterios} · Evaluado el ${new Date(evaluation.fechaEvaluacion).toLocaleDateString('es-MX')}`);
+      $('seal-criteria').replaceChildren();
+      for (const criterion of evaluation.criterios) {
+        const item = document.createElement('li');
+        item.textContent = `${criterion.cumple ? 'Cumple' : 'Falta o requiere corrección'}: ${criterion.descripcion}`;
+        $('seal-criteria').append(item);
+      }
+      $('seal-pending').replaceChildren();
+      for (const level of evaluation.nivelesPendientes) {
+        const item = document.createElement('li');
+        item.textContent = level;
+        $('seal-pending').append(item);
+      }
+      $('seal-content').hidden = false;
+    } catch (error) {
+      text('seal-status', 'No pudimos consultar la evaluación del perfil.');
+      $('seal-retry').hidden = false;
+    }
+  }
+
   async function loadAnalysis() {
     $('analysis-content').hidden = true;
     $('analysis-retry').hidden = true;
@@ -109,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showProfile(farm);
       // Fallos del análisis no impiden consultar el perfil.
       loadAnalysis();
+      loadSeal();
     } catch (error) {
       showState(error.status === 404 ? 'Parcela no encontrada' : 'No pudimos cargar la parcela',
         error.status === 404 ? 'Revisa el enlace o vuelve al catálogo para elegir otra parcela.'
@@ -119,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   $('parcel-retry').addEventListener('click', load);
   $('analysis-retry').addEventListener('click', loadAnalysis);
+  $('seal-retry').addEventListener('click', loadSeal);
   if (!farmId || farmId.includes('/') || farmId === '.' || farmId === '..') {
     showState('Enlace de parcela incompleto', 'Vuelve al catálogo y selecciona una parcela.');
     $('parcel-main').setAttribute('aria-busy', 'false');

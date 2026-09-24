@@ -24,3 +24,6 @@ td { font-family: 'JetBrains Mono', monospace; }
 thead { background: #eef2e8; }
 .analysis-note { color: var(--muted); font-size: 12px; }
 @media (max-width: 640px) { .profile-grid, .analysis-summary { grid-template-columns: 1fr; } .profile-panel, .analysis-summary { padding: 22px; } .parcel-hero { padding-top: 35px; } .periods { gap: 0; } }
+.seal-section { margin-bottom: 35px; overflow-wrap: anywhere; }
+#seal-status { font-weight: 700; }
+#seal-criteria, #seal-pending { padding-left: 22px; line-height: 1.9; }

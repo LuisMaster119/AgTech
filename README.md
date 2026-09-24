@@ -37,8 +37,8 @@ productor, actividad, ubicación y polígono. No requiere sesión.
 
 El último análisis se consulta con `GET /farms/{farm_id}/certificate`, sin
 modificar su contrato ni ejecutar análisis nuevos. Se muestran score, riesgo,
-fecha, resumen, periodos y los índices registrados. No se implementan sellos
-ni generación de certificados. La ausencia de análisis (404) se distingue de
+fecha, resumen, periodos y los índices registrados. La evaluación del perfil se
+describe debajo; no genera certificados. La ausencia de análisis (404) se distingue de
 un fallo de consulta; los errores permiten reintentar. Los datos incompletos
 se indican explícitamente, sin valores inventados. El perfil permanece visible
 cuando el análisis o el mapa no están disponibles.
@@ -46,6 +46,19 @@ cuando el análisis o el mapa no están disponibles.
 Prueba adicional con el servidor de pruebas anterior en 8010:
 `node tests/parcel.browser.cjs`. Usa respuestas simuladas y comprueba navegación,
 mapa, resultados, vista móvil, errores, datos antiguos y ausencia de escrituras.
+
+### Evaluación preliminar del perfil
+
+`GET /farms/{farm_id}/seal` evalúa Nivel I Base «Perfil documentado». Revisa ocho
+criterios de completitud: nombre, productor, historia, actividad, municipio,
+estado, país y estructura del polígono. Ciudad es opcional. Cada consulta devuelve
+estado, criterios, versión y fecha; no escribe en Firestore ni ejecuta análisis.
+La validación geométrica es estructural, no topológica ni catastral.
+
+El micrositio presenta los faltantes y distingue «Caso de demostración». Base no
+verifica veracidad, identidad ni desempeño ambiental. Export y Regenerativo quedan
+pendientes de evidencia y revisión; ningún score los otorga automáticamente.
+La marca demo del perfil no determina el origen del análisis almacenado.
 
 ### Acceso de proveedor de demostración
 

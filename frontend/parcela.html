@@ -21,12 +21,23 @@
   <main id="parcel-main" aria-busy="true">
     <div id="parcel-state" class="state-box" role="status"><h1 id="state-title">Cargando parcela…</h1><p id="state-copy">Consultando su información pública.</p><button id="parcel-retry" class="button" hidden>Reintentar</button></div>
     <article id="parcel-content" hidden>
-      <section class="parcel-hero"><p class="eyebrow">HISTORIAS DEL TERRITORIO</p><span id="demo-label" class="demo-badge" hidden>Parcela de demostración · Datos ficticios</span><h1 id="parcel-name"></h1><p id="parcel-producer" class="hero-copy"></p><p id="parcel-activity"></p></section>
+      <section class="parcel-hero"><p class="eyebrow">HISTORIAS DEL TERRITORIO</p><span id="demo-label" class="demo-badge" hidden>Caso de demostración · Perfil con datos de ejemplo</span><h1 id="parcel-name"></h1><p id="parcel-producer" class="hero-copy"></p><p id="parcel-activity"></p></section>
       <div class="profile-grid">
         <section class="profile-panel" aria-labelledby="story-title"><p class="eyebrow">SU ORIGEN</p><h2 id="story-title">La historia de esta parcela</h2><p id="parcel-story" class="story"></p></section>
         <section class="profile-panel" aria-labelledby="location-title"><p class="eyebrow">DÓNDE CRECE</p><h2 id="location-title">Ubicación</h2><dl id="parcel-location" class="location-list"></dl><p id="location-attribution" class="attribution" hidden></p></section>
       </div>
       <section class="map-section" aria-labelledby="map-title"><div class="section-heading"><h2 id="map-title">La parcela en el territorio</h2><span class="map-tag">Mapa de consulta</span></div><p id="map-status" role="status"></p><div id="map" aria-label="Polígono de la parcela"></div></section>
+      <section class="profile-panel seal-section" aria-labelledby="seal-title">
+        <p class="eyebrow">INFORMACIÓN DEL PERFIL</p><h2 id="seal-title">Evaluación preliminar AgTech</h2>
+        <p id="seal-status" role="status">Consultando la evaluación del perfil…</p>
+        <button id="seal-retry" class="button outline" hidden>Reintentar evaluación</button>
+        <div id="seal-content" hidden>
+          <p id="seal-demo" class="demo-badge" hidden></p>
+          <ul id="seal-criteria"></ul><p>La ciudad es opcional para parcelas rurales.</p>
+          <p id="seal-scope" class="analysis-note"></p><p id="seal-version" class="analysis-note"></p>
+          <h3>Niveles previstos, todavía no otorgados</h3><ul id="seal-pending"></ul>
+        </div>
+      </section>
       <section class="analysis-section" aria-labelledby="analysis-title"><p class="eyebrow">INFORMACIÓN AMBIENTAL</p><h2 id="analysis-title">Último análisis disponible</h2><p id="analysis-status" role="status">Consultando el análisis almacenado…</p><button id="analysis-retry" class="button outline" hidden>Reintentar consulta del análisis</button>
         <div id="analysis-content" hidden><div class="analysis-summary"><div><span class="metric-label">Score ecológico</span><p id="analysis-score" class="score"></p><span id="analysis-risk"></span></div><div><p id="analysis-date"></p><p id="analysis-summary"></p></div></div>
           <div class="periods"><p id="reference-period"></p><p id="recent-period"></p></div>
