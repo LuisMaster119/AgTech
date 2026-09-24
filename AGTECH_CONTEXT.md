@@ -17,6 +17,21 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Fotos del catálogo — 24 de septiembre de 2026: se retira la sección «Una mirada
+al territorio», su enlace y los botones «Ver en mapa». Cada tarjeta incorpora
+una imagen estática de Esri World Imagery, encuadrada en la geometría propia,
+con contorno menta y relleno tenue; sin capa ni consulta del buffer de 500 m.
+Imagen y contorno SVG usan la misma extensión Web Mercator y relación 16:9.
+Se conservan filtros, datos y enlace al perfil; carga diferida, atribución y
+mensajes ante geometría ausente o imagen fallida. No cambia el mapa del perfil,
+el alta, endpoints ni el análisis ambiental. La imagen es cartografía de referencia,
+no una captura del análisis Sentinel-2 ni una promesa de fecha de adquisición.
+Verificado: siete pruebas unitarias de catálogo/encuadre/geometrías; navegador
+Edge en escritorio y móvil con imágenes y parcelas simuladas, errores, filtros,
+navegación y ausencia de peticiones de buffer/análisis. Capturas revisadas.
+Consulta real a Esri con el polígono ficticio del test: HTTP 200, image/jpeg.
+No se consultaron ni escribieron parcelas reales durante las verificaciones.
+
 Ubicación al confirmar — 24 de septiembre de 2026: Agregar parcela consulta
 Nominatim desde el navegador al confirmar el polígono y completa ciudad, estado,
 país y municipio cuando existe. Usa el primer vértice como referencia aproximada,

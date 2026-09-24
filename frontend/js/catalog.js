@@ -23,9 +23,6 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
   const $ = id => document.getElementById(id);
   let farms = [];
   let loaded = false;
-  let selectedId = null;
-  let mapReady = false;
-  const layers = new Map();
 
   function element(tag, text, className) {
     const node = document.createElement(tag);
@@ -34,71 +31,11 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
     return node;
   }
 
-  function notice(title, copy) {
-    $('notice-title').textContent = title;
-    $('notice-copy').textContent = copy;
-    $('notice').showModal();
-  }
-
   function state(title, description, retry = false) {
     $('catalog-state').hidden = false;
     $('state-title').textContent = title;
     $('state-description').textContent = description;
     $('retry').hidden = !retry;
-  }
-
-  try {
-    if (window.L) {
-      MapModule.init('map', null, { readOnly: true });
-      mapReady = true;
-    }
-  } catch (error) {
-    console.warn('Mapa no disponible', error);
-  }
-  if (!mapReady) $('map-status').textContent = 'El mapa no está disponible. Puedes seguir consultando las tarjetas.';
-
-  function selectFarm(farm, scroll = true) {
-    selectedId = farm.farmId;
-    document.querySelectorAll('.parcel-card').forEach(card => {
-      card.classList.toggle('selected', card.dataset.farmId === selectedId);
-    });
-    layers.forEach((layer, id) => layer.setStyle({ weight: id === selectedId ? 5 : 2 }));
-    const layer = layers.get(selectedId);
-    if (!layer) {
-      notice('Mapa no disponible', 'No pudimos mostrar la geometría de esta parcela. Su información sigue disponible en la tarjeta.');
-      return;
-    }
-    MapModule.map.fitBounds(layer.getBounds(), { padding: [35, 35], maxZoom: 17 });
-    layer.openPopup();
-    $('map-status').textContent = `Parcela seleccionada: ${farm.nombre}`;
-    if (scroll) $('map-section').scrollIntoView({ block: 'start' });
-  }
-
-  function renderMap(visible) {
-    if (!mapReady) return;
-    MapModule.clearDrawnLayers();
-    layers.clear();
-    for (const farm of visible) {
-      try {
-        const layer = L.geoJSON(farm.geojson, {
-          style: { color: '#a1f4c8', fillColor: '#116c4a', fillOpacity: .4, weight: 2 }
-        });
-        if (!layer.getBounds().isValid()) continue;
-        const popup = element('div');
-        popup.append(element('strong', farm.nombre), element('p', Catalog.location(farm)));
-        layer.bindPopup(popup);
-        layer.on('click', () => selectFarm(farm, false));
-        MapModule.drawnItems.addLayer(layer);
-        layers.set(farm.farmId, layer);
-      } catch (error) {
-        console.warn('Geometría no disponible para una parcela');
-      }
-    }
-    const bounds = MapModule.drawnItems.getBounds();
-    if (bounds.isValid()) MapModule.map.fitBounds(bounds, { padding: [35, 35], maxZoom: 15 });
-    $('map-status').textContent = layers.size
-      ? 'Selecciona una parcela en el mapa o desde su tarjeta.'
-      : 'No hay geometrías disponibles para los resultados actuales.';
   }
 
   function card(farm) {
@@ -117,27 +54,22 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
     body.append(dl);
     if (farm.ubicacionAtribucion) body.append(element('p', farm.ubicacionAtribucion, 'attribution'));
     const actions = element('div', null, 'card-actions');
-    const mapButton = element('button', 'Ver en mapa', 'button');
-    mapButton.setAttribute('aria-label', `Ver ${farm.nombre} en mapa`);
-    mapButton.addEventListener('click', () => selectFarm(farm));
     const profileButton = element('a', 'Conocer parcela', 'button outline');
     profileButton.setAttribute('aria-label', `Conocer ${farm.nombre}`);
     profileButton.href = `/parcela.html?id=${encodeURIComponent(farm.farmId)}`;
-    actions.append(mapButton, profileButton);
-    article.append(heading, body, actions);
+    actions.append(profileButton);
+    article.append(ParcelPreview.create(farm), heading, body, actions);
     return article;
   }
 
   function render() {
     if (!loaded) return;
     const visible = Catalog.filter(farms, $('catalog-search').value, $('state-filter').value, $('activity-filter').value);
-    selectedId = null;
     $('farm-grid').replaceChildren(...visible.map(card));
     $('result-count').textContent = `${visible.length} de ${farms.length} parcelas`;
     $('catalog-state').hidden = true;
     if (!farms.length) state('Todavía no hay parcelas', 'Las parcelas aparecerán aquí cuando estén disponibles.');
     else if (!visible.length) state('No encontramos coincidencias', 'Prueba con otra búsqueda o limpia los filtros.');
-    renderMap(visible);
   }
 
   function populateFilter(id, key, label) {
