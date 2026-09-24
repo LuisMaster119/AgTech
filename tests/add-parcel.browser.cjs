@@ -13,6 +13,14 @@ const assert = require('node:assert/strict');
     await page.route('**/providers/me', r => r.fulfill({ json: { providerId: 'demo-provider-001' } }));
     let writes = 0, fail = true, payload;
     let searches = 0;
+    let reverseCalls = 0, reverseFailure = false, releaseReverse;
+    let address = { town: 'Bacalar', state: 'Quintana Roo', country: 'México', municipality: 'Bacalar' };
+    await page.route('https://nominatim.openstreetmap.org/reverse?**', async r => {
+      reverseCalls++;
+      const result = { ...address };
+      if (releaseReverse) await new Promise(resolve => { releaseReverse = resolve; });
+      return r.fulfill({ status: reverseFailure ? 503 : 200, json: { address: result } });
+    });
     await page.route('https://nominatim.openstreetmap.org/search?**', r => {
       searches++;
       return r.fulfill({ json: [{ lat: '18.68', lon: '-88.39', display_name: 'Bacalar, Quintana Roo, México' }] });
@@ -47,6 +55,44 @@ const assert = require('node:assert/strict');
     await page.waitForFunction(() => !document.getElementById('confirm-polygon').disabled);
     assert.equal(await page.locator('#save-parcel').isDisabled(), true);
     await page.getByRole('button', { name: 'Confirmar polígono' }).click();
+    await page.getByText('Ubicación completada.', { exact: false }).waitFor();
+    assert.equal(await page.locator('#ciudad').inputValue(), 'Bacalar');
+    assert.equal(await page.locator('#estado').inputValue(), 'Quintana Roo');
+    assert.equal(await page.locator('#pais').inputValue(), 'México');
+    assert.equal(reverseCalls, 1);
+    // Redibujo elimina solo valores automáticos y conserva correcciones manuales.
+    await page.locator('#ciudad').fill('Ciudad manual');
+    async function redraw(lon) {
+      await page.getByRole('button', { name: 'Descartar polígono' }).click();
+      await page.evaluate(lon => MapModule.onPolygonCreatedCallback({ vertexCount: 3, geojson: {
+        type: 'Polygon', coordinates: [[[lon,18], [lon+.01,18], [lon,18.01], [lon,18]]]
+      } }), lon);
+      await page.getByRole('button', { name: 'Confirmar polígono' }).click();
+    }
+    address = { country: 'México' };
+    await redraw(-89);
+    await page.getByText('La ubicación disponible es parcial.', { exact: false }).waitFor();
+    assert.equal(await page.locator('#ciudad').inputValue(), 'Ciudad manual');
+    assert.equal(await page.locator('#estado').inputValue(), '');
+    reverseFailure = true;
+    await redraw(-90);
+    await page.getByText('No pudimos consultar la ubicación.', { exact: false }).waitFor();
+    assert.equal(await page.locator('#save-parcel').isEnabled(), true);
+    reverseFailure = false;
+    address = { city: 'Respuesta antigua', state: 'Estado antiguo', country: 'México' };
+    releaseReverse = true;
+    await redraw(-91);
+    await page.waitForFunction(() => document.getElementById('save-parcel').disabled);
+    const deadline = Date.now() + 10000;
+    while (typeof releaseReverse !== 'function' && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 20));
+    assert.equal(typeof releaseReverse, 'function');
+    await page.getByRole('button', { name: 'Descartar polígono' }).click();
+    const release = releaseReverse; releaseReverse = null; release();
+    address = { city: 'Mérida', state: 'Yucatán', country: 'México' };
+    await redraw(-92);
+    await page.getByText('Ubicación completada.', { exact: false }).waitFor();
+    assert.equal(await page.locator('#ciudad').inputValue(), 'Ciudad manual');
+    assert.equal(await page.locator('#estado').inputValue(), 'Yucatán');
     await page.getByLabel('Nombre de la parcela *', { exact: true }).fill('Parcela de prueba');
     await page.getByLabel('Productor', { exact: true }).fill('Productor demo');
     await page.getByRole('button', { name: 'Guardar parcela' }).click();
@@ -56,6 +102,9 @@ const assert = require('node:assert/strict');
     await page.getByRole('button', { name: 'Guardar parcela' }).click();
     await page.getByRole('heading', { name: 'Parcela guardada' }).waitFor();
     assert.equal(payload.geojson.type, 'Polygon');
+    assert.equal(payload.ciudad, 'Ciudad manual');
+    assert.equal(payload.estado, 'Yucatán');
+    assert.equal(payload.pais, 'México');
     assert.deepEqual(payload.geojson.coordinates[0][0], payload.geojson.coordinates[0].at(-1));
     assert.equal('providerId' in payload, false);
     assert.equal(writes, 2);

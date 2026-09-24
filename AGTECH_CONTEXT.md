@@ -17,6 +17,21 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Ubicación al confirmar — 24 de septiembre de 2026: Agregar parcela consulta
+Nominatim desde el navegador al confirmar el polígono y completa ciudad, estado,
+país y municipio cuando existe. Usa el primer vértice como referencia aproximada,
+igual que el servicio del servidor, y permite revisar y corregir los resultados.
+Conserva campos manuales; al redibujar elimina solo valores automáticos e ignora
+respuestas anteriores. Espera la consulta antes de permitir guardar; fallos o
+datos parciales permiten completar manualmente. La consulta tiene timeout de 15 s,
+caché de 30 ubicaciones y comparte cola/separación con el buscador del mapa.
+Este flujo no depende de GEOCODING_ENABLED; la configuración y el enriquecimiento
+opcional del servidor al guardar siguen intactos. No cambia endpoints ni análisis.
+Verificación: cuatro pruebas aisladas de ubicación y cuatro de catálogo correctas,
+sintaxis JavaScript y diff revisados. Prueba Edge ampliada pero no completada:
+el mapa externo no quedó disponible antes del timeout; pendiente verificación
+con mapa y servicio reales. No se escribieron datos en Firestore.
+
 Visibilidad de evaluación — 24 de septiembre de 2026: el bloque de criterios
 Tlalli inicia oculto y solo se muestra con `vista=proveedor` desde Mis parcelas
 y una sesión vigente cuya lista incluya la parcela. Catálogo, enlaces directos

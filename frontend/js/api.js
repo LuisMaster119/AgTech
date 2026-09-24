@@ -6,6 +6,43 @@
 const API_BASE = window.location.origin;
 
 const API = {
+  _nominatimQueue: Promise.resolve(),
+  _nominatimLastRequest: 0,
+  _locationCache: new Map(),
+  // Búsqueda e inversa comparten separación de peticiones en esta pantalla.
+  nominatimRequest(url) {
+    const request = this._nominatimQueue.then(async () => {
+      await new Promise(resolve => setTimeout(resolve, Math.max(0, 1100 - (Date.now() - this._nominatimLastRequest))));
+      this._nominatimLastRequest = Date.now();
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 15000);
+      try {
+        const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error(`Nominatim error HTTP ${response.status}`);
+        return await response.json();
+      } finally { clearTimeout(timer); }
+    });
+    this._nominatimQueue = request.catch(() => {});
+    return request;
+  },
+  async reverseNominatim(geometry) {
+    // Misma referencia aproximada que el servicio existente: primer vértice.
+    const [lon, lat] = geometry.coordinates[0][0];
+    if (!Number.isFinite(lon) || !Number.isFinite(lat) || Math.abs(lon) > 180 || Math.abs(lat) > 90) throw new Error('Coordenadas inválidas');
+    const key = `${lon},${lat}`;
+    if (this._locationCache.has(key)) return this._locationCache.get(key);
+    const payload = await this.nominatimRequest(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lon=${lon}&lat=${lat}&addressdetails=1&accept-language=es`);
+    const address = payload?.address;
+    if (!address || typeof address !== 'object' || Array.isArray(address)) throw new Error('Ubicación no disponible');
+    const location = {};
+    for (const [field, keys] of Object.entries({ ciudad: ['city', 'town', 'village'], municipio: ['municipality'], estado: ['state'], pais: ['country'] })) {
+      const value = keys.map(key => address[key]).find(value => typeof value === 'string' && value.trim() && value.trim().length <= 150);
+      if (value) location[field] = value.trim();
+    }
+    if (this._locationCache.size >= 30) this._locationCache.delete(this._locationCache.keys().next().value);
+    this._locationCache.set(key, location);
+    return location;
+  },
   // Lecturas del micrositio; conservan el estado HTTP para distinguir ausencia y fallo.
   async readPublic(path) {
     const controller = new AbortController();
@@ -152,27 +189,14 @@ const API = {
   async searchNominatim(query, { throwOnError = false } = {}) {
     if (!query || query.trim().length < 2) return [];
 
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 15000);
     try {
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
-      const response = await fetch(url, {
-        signal: controller.signal,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Nominatim error HTTP ${response.status}`);
-      }
-
-      return await response.json();
+      return await this.nominatimRequest(url);
     } catch (error) {
       console.warn('Geocoding Warning (Nominatim):', error);
       if (throwOnError) throw error;
       return [];
-    } finally { clearTimeout(timer); }
+    }
   }
 };
 

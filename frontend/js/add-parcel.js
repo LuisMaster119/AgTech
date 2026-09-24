@@ -1,8 +1,18 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const $ = id => document.getElementById(id);
   let geometry = null, confirmed = false, saving = false, saved = false;
+  let locationVersion = 0, locating = false;
+  const automaticLocation = {};
+  const locationFields = ['ciudad', 'municipio', 'estado', 'pais'];
+  for (const key of locationFields) $(key).addEventListener('input', () => { delete automaticLocation[key]; });
   const draw = $('start-draw'), confirm = $('confirm-polygon'), cancel = $('cancel-draw');
   function resetPolygon() {
+    locationVersion++; locating = false;
+    for (const key of locationFields) {
+      if (automaticLocation[key] !== undefined && $(key).value === automaticLocation[key]) $(key).value = '';
+      delete automaticLocation[key];
+    }
+    $('location-status').textContent = '';
     geometry = null; confirmed = false;
     confirm.disabled = true; $('save-parcel').disabled = true;
     $('coordinate-preview').textContent = '';
@@ -51,15 +61,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     MapModule.cancelDrawing(); MapModule.clearDrawnLayers(); resetPolygon();
     $('polygon-status').textContent = 'Polígono descartado. Puedes dibujar otro.';
   });
-  confirm.addEventListener('click', () => {
+  confirm.addEventListener('click', async () => {
     if (!geometry) return;
-    confirmed = true; confirm.disabled = true; $('save-parcel').disabled = false;
+    confirmed = true; confirm.disabled = true; $('save-parcel').disabled = true;
+    const version = ++locationVersion;
+    locating = true;
+    $('location-status').textContent = 'Buscando ciudad, estado y país…';
     $('polygon-status').textContent = 'Polígono confirmado. Completa los datos y guarda la parcela.';
     $('nombre').focus();
+    try {
+      const location = await API.reverseNominatim(geometry);
+      if (version !== locationVersion) return;
+      for (const key of locationFields) {
+        if (!$(key).value.trim() && location[key]) {
+          $(key).value = location[key]; automaticLocation[key] = location[key];
+        }
+      }
+      $('location-status').textContent = ['ciudad', 'estado', 'pais'].every(key => $(key).value.trim())
+        ? 'Ubicación completada. Revísala y corrígela si es necesario.'
+        : 'La ubicación disponible es parcial. Completa los campos faltantes manualmente.';
+    } catch {
+      if (version !== locationVersion) return;
+      $('location-status').textContent = 'No pudimos consultar la ubicación. Puedes completarla manualmente y guardar.';
+    } finally {
+      if (version === locationVersion) { locating = false; $('save-parcel').disabled = false; }
+    }
   });
   $('parcel-form').addEventListener('submit', async event => {
     event.preventDefault();
-    if (!confirmed || !geometry || saving || saved) return;
+    if (!confirmed || !geometry || locating || saving || saved) return;
     saving = true;
     $('save-status').textContent = 'Guardando parcela…';
     $('login-link').hidden = true;
