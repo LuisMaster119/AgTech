@@ -3,6 +3,9 @@
 ## Contexto y comunicación
 
 - Leer AGTECH_CONTEXT.md antes de planear o modificar el proyecto.
+- Al retomar en otro dispositivo, leer primero la sección «Punto de continuación»
+  de AGTECH_CONTEXT.md. Comprobar el código y la configuración local antes de
+  continuar; no repetir etapas completadas ni asumir que se copiaron credenciales.
 - Responder siempre en español, con pasos cortos y concretos.
 - Trabajar con Windows y PowerShell.
 - Priorizar un MVP de hackathon con cambios pequeños.

@@ -15,6 +15,57 @@
 
 ## 2. Cómo interpretar este documento
 
+### Punto de continuación — 23 de septiembre de 2026
+
+Luis pidió guardar el contexto y las instrucciones del agente para continuar
+desde otro dispositivo. No hay una implementación nueva en curso.
+
+Estado actual:
+- Etapas 1 a 6 implementadas: perfiles, catálogo, micrositio, acceso demo,
+  Mis parcelas y alta mediante dibujo. El proveedor ya puede ejecutar el
+  análisis existente y consultar el resultado guardado en el perfil público.
+- Etapa 7: Base significa «Perfil documentado»; comprueba completitud, no
+  veracidad ni desempeño ambiental. Export y Regenerativo no se otorgan.
+- Etapa 8: documento imprimible de preevaluación y QR hacia el perfil actual.
+  No hay certificación oficial, firma digital ni archivo histórico certificado.
+- Últimos commits funcionales: `772f188` (Base), `f6887dd` (ejecución de análisis),
+  `9233b8e` (documento y QR).
+
+Validación: Luis informó que realizó las pruebas y que todo parece funcionar
+correctamente. Es validación manual reportada por el usuario; no detalló cada
+caso ni aportó registros. No atribuir al agente una ejecución real de Earth Engine,
+Firestore o escaneo físico del QR. La última verificación automatizada del agente
+fue de 55 pruebas Python y pruebas de navegador con datos interceptados.
+
+Siguiente etapa prevista: 9, `buffer-zone-and-moisture`. Empezar por definir un
+cambio pequeño para visualizar el entorno de 500 m; humedad y recomendaciones
+requieren criterios concretos antes de implementarse. No modificar NDVI, NDMI,
+NDBI, scoring ni el buffer utilizado por el análisis. Este registro no autoriza
+iniciar automáticamente esa etapa: atender el siguiente prompt de Luis.
+
+Para retomar en otro equipo:
+1. Clonar o actualizar `https://github.com/LuisMaster119/AgTech.git`, rama `main`,
+   y comprobar que incluye los commits funcionales anteriores y este contexto.
+2. Abrir la carpeta del proyecto y leer AGENTS.md y este documento.
+3. Crear un entorno local (no copiar `venv`): `python -m venv venv`, activar con
+   `.\venv\Scripts\Activate.ps1` e instalar `python -m pip install -r requirements.txt`.
+4. Configurar `.env` y las credenciales de Google Cloud por un medio seguro:
+   `GOOGLE_APPLICATION_CREDENTIALS` apunta a la ruta local del JSON autorizado;
+   mantener `FIRESTORE_DATABASE_ID=ag-tech`. Estos archivos no están en Git.
+5. Para el acceso MVP usar `DEMO_AUTH_ENABLED=true`. Credenciales públicas demo:
+   `proveedor@demo.test` / `demo123`. La sesión se pierde al reiniciar el servidor;
+   utilizar un solo worker. Esto no protege datos privados reales.
+6. Revisar `PUBLIC_BASE_URL` para el QR (origen HTTP(S) accesible, sin ruta).
+   Localhost no sirve para abrir el perfil desde otro dispositivo. La geocodificación
+   sigue desactivada por defecto; activarla solo con su configuración existente.
+7. Ejecutar `uvicorn app.main:app --reload --port 8000` y abrir
+   `http://127.0.0.1:8000/`. No se requiere el parámetro `?v=...`.
+
+El contexto persistente del agente está en estos archivos versionados, no en
+una sesión demo ni en el entorno virtual. Los registros de parcelas y análisis
+permanecen en Firestore, no se trasladan al clonar el repositorio. No cargar de
+nuevo semillas ni sobrescribir datos para retomar el trabajo.
+
 Este documento reúne el contexto, las decisiones y la dirección del producto.
 
 Las secciones de funcionalidades describen el comportamiento previsto.
