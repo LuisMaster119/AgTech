@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       if (!await canAnalyze()) {
         $('run-analysis').hidden = true;
-        text('run-status', 'Inicia sesión como proveedor de esta parcela para ejecutar el análisis.');
+        text('run-status', 'Inicia sesión como productor de esta parcela para ejecutar el análisis.');
         return;
       }
       submitted = true;
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
       text('run-status', 'Análisis guardado. Ya puedes consultar el resultado aquí.');
     } catch (error) {
       if (error.status === 401) $('run-analysis').hidden = true;
-      text('run-status', error.status === 401 ? 'Tu sesión venció. Vuelve a iniciar sesión como proveedor.'
+      text('run-status', error.status === 401 ? 'Tu sesión venció. Vuelve a iniciar sesión como productor.'
         : !submitted ? 'No pudimos comprobar la sesión. Inténtalo de nuevo.'
         : error.status === 502 ? 'El servicio satelital no pudo completar el análisis. Puedes intentarlo de nuevo.'
         : 'No pudimos confirmar el resultado. El servidor podría seguir procesando. Consulta el análisis almacenado antes de repetir.');

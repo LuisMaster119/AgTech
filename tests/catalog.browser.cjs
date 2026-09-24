@@ -51,7 +51,7 @@ const assert = require('node:assert/strict');
     assert.equal(await page.locator('.parcel-card').count(), 1);
     await page.getByRole('button', { name: 'Limpiar filtros' }).click();
     await page.waitForFunction(() => document.querySelectorAll('.parcel-card').length === 3);
-    await page.getByRole('button', { name: 'Iniciar sesión como proveedor' }).click();
+    await page.getByRole('button', { name: 'Iniciar sesión como productor' }).click();
     await page.getByRole('button', { name: 'Iniciar sesión', exact: true }).waitFor();
     await page.getByRole('link', { name: 'Volver al catálogo' }).click();
     await page.locator('.parcel-card').first().waitFor();

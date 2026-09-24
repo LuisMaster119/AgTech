@@ -40,8 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (current !== generation) return;
       if (!Array.isArray(farms)) throw new Error('Respuesta inválida');
       list.replaceChildren(...farms.map(card));
-      status.textContent = farms.length ? `${farms.length} parcelas asociadas a tu proveedor.`
-        : 'Todavía no tienes parcelas asociadas. Las parcelas aparecerán aquí cuando estén registradas a nombre de este proveedor.';
+      status.textContent = farms.length ? `${farms.length} parcelas asociadas a tu perfil de productor.`
+        : 'Todavía no tienes parcelas asociadas. Las parcelas aparecerán aquí cuando estén registradas a nombre de este productor.';
     } catch (error) {
       if (current !== generation) return;
       if (error.status === 401) {

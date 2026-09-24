@@ -17,6 +17,15 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Terminología de interfaz — 24 de septiembre de 2026: se usa «Productor» en
+lugar de «Proveedor» en los textos visibles del catálogo, acceso, Mis parcelas,
+alta y mensajes del micrositio. Las referencias históricas de este documento
+conservan su terminología anterior. Se mantienen /proveedor.html, vista=proveedor,
+endpoints /providers, identificadores internos y credenciales demo para preservar
+compatibilidad. Es un cambio de presentación, sin cambios de roles ni permisos.
+Verificado: pruebas de navegador del catálogo y dashboard con datos simulados,
+sintaxis del micrositio y revisión del diff.
+
 Ajuste de espaciado del proveedor — 24 de septiembre de 2026: la columna de
 datos comienza más a la izquierda y reserva espacio adicional antes de la imagen.
 Se conserva la distribución móvil. Verificado con la prueba de navegador del
