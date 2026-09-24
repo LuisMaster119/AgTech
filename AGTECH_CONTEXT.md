@@ -292,7 +292,7 @@ Reglas:
   acreditación global o neutralidad de carbono como verificadas
   sin criterios y evidencia definidos.
 
-El Nivel I Base comprueba completitud del perfil (etapa 7). Export y Regenerativo siguen pendientes; la ampliación de certificados corresponde a un cambio posterior. Preservar el endpoint existente.
+El Nivel I Base comprueba completitud del perfil (etapa 7). Export y Regenerativo siguen pendientes. La etapa 8 incorpora un documento imprimible de preevaluación y QR al perfil, sin certificación oficial ni emisión histórica. Se preserva el endpoint existente.
 
 ## 13. Orden de implementación
 
@@ -543,6 +543,32 @@ reintento de evaluación, análisis separado y ancho móvil, con respuestas de p
 No modificar el algoritmo base de análisis.
 
 ### 8. certificate-and-qr
+
+Implementado: el micrositio ofrece «Imprimir / Guardar como PDF» cuando están
+disponibles el análisis almacenado con ID, la evaluación del perfil y el QR.
+La impresión incluye perfil, marca demo, estado y criterios de Base, versión,
+fecha de evaluación, ID y fecha del análisis, score, periodos e índices registrados.
+Base puede indicar faltantes; no se convierte un perfil incompleto en un sello otorgado.
+No es certificación oficial, aprobación de exportación ni documento firmado.
+No se emiten snapshots persistentes ni se recalcula el análisis.
+
+`GET /farms/{farm_id}/share` comprueba existencia y genera enlace y QR SVG con
+`qrcode==8.2`, localmente y sin escrituras o servicios externos. El QR abre el
+perfil actualizado, no verifica una copia histórica. El endpoint anterior
+`/certificate` mantiene su contrato y se consume sin cambios.
+
+`PUBLIC_BASE_URL` opcional fija el origen HTTP(S) accesible de la aplicación;
+sin configurarlo se utiliza la dirección de la petición. Se rechazan rutas,
+credenciales y parámetros en esa configuración. Localhost muestra una advertencia:
+para escanear desde otro equipo se requiere una dirección alcanzable. Este cambio
+no publica el servidor ni configura acceso de red.
+
+Verificación: 55 pruebas Python, enlace codificado y estructura SVG, configuración,
+404/503 sin escrituras; navegador con datos interceptados, generación QR real,
+habilitación de impresión, ausencia de análisis, errores/reintentos, modo impresión
+y móvil. Inspección visual del modo impresión. No se probó un escaneo físico,
+Earth Engine ni Firestore reales. No hay descarga PDF del servidor: se usa el diálogo
+de impresión del navegador.
 
 - Ampliar la funcionalidad de certificado existente.
 - Incorporar sello y criterios aplicables.

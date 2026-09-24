@@ -38,7 +38,7 @@ productor, actividad, ubicación y polígono. No requiere sesión.
 El último análisis se consulta con `GET /farms/{farm_id}/certificate`, sin
 modificar su contrato ni ejecutar análisis nuevos. Se muestran score, riesgo,
 fecha, resumen, periodos y los índices registrados. La evaluación del perfil se
-describe debajo; no genera certificados. La ausencia de análisis (404) se distingue de
+describe debajo; el documento imprimible no emite certificaciones oficiales. La ausencia de análisis (404) se distingue de
 un fallo de consulta; los errores permiten reintentar. Los datos incompletos
 se indican explícitamente, sin valores inventados. El perfil permanece visible
 cuando el análisis o el mapa no están disponibles.
@@ -75,6 +75,25 @@ El micrositio presenta los faltantes y distingue «Caso de demostración». Base
 verifica veracidad, identidad ni desempeño ambiental. Export y Regenerativo quedan
 pendientes de evidencia y revisión; ningún score los otorga automáticamente.
 La marca demo del perfil no determina el origen del análisis almacenado.
+
+### Certificado de preevaluación y QR
+
+Abre el perfil de una parcela con análisis almacenado. Al cargar también la
+evaluación y el QR se habilita **Imprimir / Guardar como PDF**. El documento
+conserva la etiqueta demo, los criterios del perfil y el ID y fecha del análisis.
+No es una certificación oficial ni concede Export o Regenerativo. El QR abre el
+perfil actualizado; no autentica una versión histórica ni firma el documento.
+
+Instala las dependencias con `python -m pip install -r requirements.txt` y reinicia
+Uvicorn. El QR se genera localmente mediante [qrcode](https://pypi.org/project/qrcode/),
+sin enviar información a un generador externo. `GET /farms/{farm_id}/share` devuelve
+`publicUrl` y `qrSvg`, sin escribir datos.
+
+Para usar una dirección accesible desde otro dispositivo, configura en `.env`
+`PUBLIC_BASE_URL=https://tu-dominio.example` (origen sin rutas ni parámetros).
+Si se omite, se usa la dirección de la petición. Un QR de `127.0.0.1` o `localhost`
+solo apunta al equipo del lector; configurar la URL no publica el servidor.
+La pantalla avisa de esta limitación. PDF utiliza el diálogo del navegador.
 
 ### Acceso de proveedor de demostración
 

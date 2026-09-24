@@ -27,3 +27,30 @@ thead { background: #eef2e8; }
 .seal-section { margin-bottom: 35px; overflow-wrap: anywhere; }
 #seal-status { font-weight: 700; }
 #seal-criteria, #seal-pending { padding-left: 22px; line-height: 1.9; }
+.report-heading { display: none; }
+.report-share { margin-bottom: 40px; overflow-wrap: anywhere; }
+#profile-qr { display: block; background: white; margin-block: 15px; }
+#profile-url { display: block; overflow-wrap: anywhere; }
+@media print {
+  @page { size: A4; margin: 15mm; }
+  body { background: white; color: #012d1d; font-size: 10pt; }
+  .site-header, footer, .skip-link, button, .map-section, #share-status, #report-status { display: none !important; }
+  body:not(.report-ready) #parcel-content { display: none !important; }
+  body:not(.report-ready)::before { content: 'Documento no disponible: carga el perfil, análisis, evaluación y QR antes de imprimir.'; }
+  .report-heading { display: block; }
+  main { width: 100%; max-width: none; padding: 0; }
+  .parcel-hero { padding: 10px 0; }
+  .parcel-hero h1 { font-size: 24pt; }
+  .profile-grid { display: block; }
+  .profile-panel { padding: 12px; margin-bottom: 12px; box-shadow: none; }
+  .analysis-section { padding-bottom: 15px; }
+  .analysis-summary { background: white; color: #012d1d; border: 1px solid #1b4332; gap: 15px; padding: 15px; }
+  .metric-label { color: #1b4332; }
+  .table-scroll { overflow: visible; }
+  table { font-size: 8pt; table-layout: fixed; }
+  th, td { padding: 6px; overflow-wrap: anywhere; }
+  tr, .analysis-summary, #share-content { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  #profile-qr { width: 35mm; height: 35mm; }
+  .demo-badge { border: 1px solid #116c4a; }
+}

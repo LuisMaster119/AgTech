@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field
+from pydantic import Field, AnyHttpUrl, field_validator
 
 
 class Settings(BaseSettings):
@@ -10,6 +10,15 @@ class Settings(BaseSettings):
     PORT: int = 8000
     HOST: str = "0.0.0.0"
     DEMO_AUTH_ENABLED: bool = False
+    PUBLIC_BASE_URL: Optional[AnyHttpUrl] = None
+
+    @field_validator('PUBLIC_BASE_URL')
+    @classmethod
+    def public_origin(cls, value):
+        if value and (value.username or value.password or value.query or value.fragment
+                      or value.path not in (None, '', '/')):
+            raise ValueError('PUBLIC_BASE_URL debe ser un origen HTTP(S), sin ruta ni credenciales.')
+        return value
     # Activación explícita para evitar enviar coordenadas sin configurar el servicio.
     GEOCODING_ENABLED: bool = False
     GEOCODING_URL: str = "https://nominatim.openstreetmap.org/reverse"

@@ -2,10 +2,12 @@ import uuid
 import logging
 from datetime import datetime, timezone
 from typing import Optional, List
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Request
 from google.cloud import firestore
 
 from app.database import get_db
+from app.config import settings
+from app.services.sharing import profile_share
 from app.models.farm import FarmCreate, FarmResponse
 from app.models.seal import SealEvaluation
 from app.services.seals import evaluate_profile
@@ -109,6 +111,17 @@ async def get_farm(
             detail=f"Granja con ID '{farm_id}' no encontrada."
         )
     return FarmResponse(**doc.to_dict())
+
+
+@router.get("/{farm_id}/share", summary="Consultar enlace y QR del perfil público")
+async def get_farm_share(farm_id: str, request: Request, db: firestore.Client = Depends(get_db)):
+    try:
+        doc = db.collection("farms").document(farm_id).get()
+    except Exception:
+        raise HTTPException(status_code=503, detail="No se pudo consultar el enlace público.")
+    if not doc.exists:
+        raise HTTPException(status_code=404, detail="Parcela no encontrada.")
+    return profile_share(str(settings.PUBLIC_BASE_URL or request.base_url), farm_id)
 
 
 @router.get("/{farm_id}/seal", response_model=SealEvaluation,

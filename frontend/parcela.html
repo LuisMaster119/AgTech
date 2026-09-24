@@ -21,6 +21,7 @@
   <main id="parcel-main" aria-busy="true">
     <div id="parcel-state" class="state-box" role="status"><h1 id="state-title">Cargando parcela…</h1><p id="state-copy">Consultando su información pública.</p><button id="parcel-retry" class="button" hidden>Reintentar</button></div>
     <article id="parcel-content" hidden>
+      <section class="report-heading"><p class="eyebrow">TERRASYNC · AGTECH</p><h2>Certificado de preevaluación AgTech</h2><p>Documento informativo. No es una certificación oficial ni acredita exportación.</p><p id="report-analysis-id"></p></section>
       <section class="parcel-hero"><p class="eyebrow">HISTORIAS DEL TERRITORIO</p><span id="demo-label" class="demo-badge" hidden>Caso de demostración · Perfil con datos de ejemplo</span><h1 id="parcel-name"></h1><p id="parcel-producer" class="hero-copy"></p><p id="parcel-activity"></p></section>
       <div class="profile-grid">
         <section class="profile-panel" aria-labelledby="story-title"><p class="eyebrow">SU ORIGEN</p><h2 id="story-title">La historia de esta parcela</h2><p id="parcel-story" class="story"></p></section>
@@ -44,6 +45,15 @@
           <div class="table-scroll" tabindex="0" role="region" aria-label="Comparación de índices espectrales"><table><caption>Índices registrados · Parcela y entorno de 500 m</caption><thead><tr><th scope="col">Índice</th><th scope="col">Parcela referencia</th><th scope="col">Parcela reciente</th><th scope="col">Entorno referencia</th><th scope="col">Entorno reciente</th></tr></thead><tbody id="indices-body"></tbody></table></div>
           <p class="analysis-note">Pre-evaluación técnica basada en imágenes satelitales. No constituye una certificación oficial ni acredita automáticamente cumplimiento regulatorio.</p>
         </div>
+      </section>
+      <section class="profile-panel report-share" aria-labelledby="report-title">
+        <h2 id="report-title">Certificado de preevaluación y enlace público</h2>
+        <p>Incluye el perfil actual, sus criterios y el análisis almacenado. El QR abre el perfil actualizado; no verifica una copia histórica ni constituye una firma digital.</p>
+        <p id="share-status" role="status">Preparando enlace…</p>
+        <div id="share-content" hidden><img id="profile-qr" alt="QR hacia el perfil público de esta parcela" width="180" height="180"><a id="profile-url"></a><p id="share-note"></p></div>
+        <button id="share-retry" class="button outline" hidden>Reintentar enlace y QR</button>
+        <p id="report-status" role="status">Se requiere un análisis almacenado, la evaluación del perfil y el QR para imprimir.</p>
+        <button id="print-report" class="button" disabled>Imprimir / Guardar como PDF</button>
       </section>
     </article>
   </main>

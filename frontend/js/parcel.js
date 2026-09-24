@@ -7,6 +7,38 @@ document.addEventListener('DOMContentLoaded', () => {
     ? value.toLocaleString('es-MX', { maximumFractionDigits: 4 }) : 'No disponible';
   const period = value => value?.inicio && value?.fin ? `${value.inicio} — ${value.fin}` : 'No disponible';
   let mapInitialized = false;
+  let analysisReady = false, sealReady = false, shareReady = false;
+  function updateReport() {
+    const ready = analysisReady && sealReady && shareReady;
+    $('print-report').disabled = !ready;
+    document.body.classList.toggle('report-ready', ready);
+    text('report-status', ready ? 'Documento listo. Puedes imprimirlo o elegir Guardar como PDF en el diálogo de impresión.'
+      : 'Se requiere un análisis almacenado, la evaluación del perfil y el QR para imprimir.');
+  }
+  async function loadShare() {
+    shareReady = false; updateReport();
+    $('share-content').hidden = true;
+    $('share-retry').hidden = true;
+    text('share-status', 'Preparando enlace…');
+    try {
+      const share = await API.readPublic(`/farms/${encodeURIComponent(farmId)}/share`);
+      const url = new URL(share.publicUrl);
+      if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Enlace inválido');
+      $('profile-url').href = url.href;
+      $('profile-url').textContent = url.href;
+      $('profile-qr').src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(share.qrSvg)}`;
+      await $('profile-qr').decode();
+      text('share-note', ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)
+        ? 'Este QR apunta a este equipo (localhost). Para abrirlo desde un celular necesitas una dirección accesible y configurar PUBLIC_BASE_URL en el servidor.'
+        : 'El dispositivo que escanee el QR debe tener acceso a esta dirección.');
+      $('share-content').hidden = false;
+      text('share-status', 'Enlace y QR disponibles.');
+      shareReady = true;
+    } catch (error) {
+      text('share-status', 'No pudimos preparar el enlace y QR.');
+      $('share-retry').hidden = false;
+    } finally { updateReport(); }
+  }
 
   function showState(title, copy, retry = false) {
     text('state-title', title);
@@ -59,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function loadSeal() {
+    sealReady = false; updateReport();
     $('seal-content').hidden = true;
     $('seal-retry').hidden = true;
     text('seal-status', 'Consultando la evaluación del perfil…');
@@ -85,13 +118,15 @@ document.addEventListener('DOMContentLoaded', () => {
         $('seal-pending').append(item);
       }
       $('seal-content').hidden = false;
+      sealReady = true;
     } catch (error) {
       text('seal-status', 'No pudimos consultar la evaluación del perfil.');
       $('seal-retry').hidden = false;
-    }
+    } finally { updateReport(); }
   }
 
   async function loadAnalysis() {
+    analysisReady = false; updateReport();
     $('analysis-content').hidden = true;
     $('analysis-retry').hidden = true;
     document.querySelector('.analysis-section').setAttribute('aria-busy', 'true');
@@ -123,12 +158,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       $('analysis-content').hidden = false;
       text('analysis-status', 'Resultados del último análisis almacenado.');
+      text('report-analysis-id', `Análisis: ${analysis.analysisId || 'Identificador no disponible'} · Fecha: ${analysis.fechaCreacion || 'No disponible'}`);
+      analysisReady = Boolean(analysis.analysisId);
     } catch (error) {
       text('analysis-status', error.status === 404 ? 'No hay un análisis disponible para esta parcela.'
         : 'No pudimos consultar el análisis. Puedes seguir consultando la información de la parcela.');
       $('analysis-retry').hidden = error.status === 404;
     } finally {
       document.querySelector('.analysis-section').setAttribute('aria-busy', 'false');
+      updateReport();
     }
   }
 
@@ -143,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Fallos del análisis no impiden consultar el perfil.
       loadAnalysis();
       loadSeal();
+      loadShare();
     } catch (error) {
       showState(error.status === 404 ? 'Parcela no encontrada' : 'No pudimos cargar la parcela',
         error.status === 404 ? 'Revisa el enlace o vuelve al catálogo para elegir otra parcela.'
@@ -154,6 +193,10 @@ document.addEventListener('DOMContentLoaded', () => {
   $('parcel-retry').addEventListener('click', load);
   $('analysis-retry').addEventListener('click', loadAnalysis);
   $('seal-retry').addEventListener('click', loadSeal);
+  $('share-retry').addEventListener('click', loadShare);
+  $('print-report').addEventListener('click', () => {
+    if (analysisReady && sealReady && shareReady) window.print();
+  });
   if (!farmId || farmId.includes('/') || farmId === '.' || farmId === '..') {
     showState('Enlace de parcela incompleto', 'Vuelve al catálogo y selecciona una parcela.');
     $('parcel-main').setAttribute('aria-busy', 'false');

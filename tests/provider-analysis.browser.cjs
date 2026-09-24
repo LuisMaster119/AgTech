@@ -33,6 +33,7 @@ const assert = require('node:assert/strict');
     await page.route('**/farms/demo', r => r.fulfill({ json: farm }));
     await page.route('**/farms/demo/certificate', r => r.fulfill({ json: analysis }));
     await page.route('**/farms/demo/seal', r => r.fulfill({ status: 503, json: {} }));
+    await page.route('**/farms/demo/share', r => r.fulfill({ status: 503, json: {} }));
     await page.goto('http://127.0.0.1:8010/proveedor.html');
     await page.locator('summary').first().click();
     assert.equal(posts, 0);
