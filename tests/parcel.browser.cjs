@@ -18,6 +18,7 @@ const share = JSON.parse(execFileSync('venv/Scripts/python.exe', ['-c',
       geojson: { type: 'Polygon', coordinates: [[[-88.40, 18.70], [-88.39, 18.70], [-88.39, 18.71], [-88.40, 18.70]]] } };
     const analysis = { farmId: 'demo', score: 0, nivelRiesgo: 'Alto', fechaCreacion: '2026-09-01T12:00:00Z', resumenEjecutivo: 'Resultado de prueba para verificar la visualización.', periodoReferencia: { inicio: '2024-01-01', fin: '2024-06-30' }, periodoReciente: { inicio: '2026-01-01', fin: '2026-06-30' }, indices: { referencia: { ndvi_granja: .7, ndvi_buffer: .75, ndmi_granja: .2, ndmi_buffer: .3, ndbi_granja: -.2, ndbi_buffer: -.3 }, reciente: { ndvi_granja: 0, ndvi_buffer: .74, ndmi_granja: -.1, ndmi_buffer: .2, ndbi_granja: .2, ndbi_buffer: -.2 } } };
     analysis.analysisId = 'analysis-test-001';
+    analysis.desglose = [{ indice: 'NDVI', impacto: 'Positivo / Estable', delta_relativo: .0011, interpretacion: 'Interpretación almacenada de prueba.' }];
     await page.route('**/farms', route => route.fulfill({ json: [farm] }));
     let bufferMode = 'error';
     await page.route('**/farms/demo/buffer', route => route.fulfill({ status: bufferMode === 'error' ? 502 : 200, json: {
@@ -82,8 +83,12 @@ const share = JSON.parse(execFileSync('venv/Scripts/python.exe', ['-c',
     await page.emulateMedia({ media: 'screen' });
     assert.equal(await page.locator('#parcel-name').textContent(), farm.nombre);
     assert.equal(await page.locator('#analysis-score').textContent(), '0 / 100');
-    assert.equal(await page.locator('#indices-body tr').count(), 3);
-    assert.equal(await page.locator('#indices-body tr').first().locator('td').nth(1).textContent(), '0');
+    assert.equal(await page.locator('#indices-body .spectral-card').count(), 3);
+    assert.equal(await page.locator('.spectral-badge').first().textContent(), 'Positivo / Estable');
+    assert.equal(await page.locator('.spectral-delta strong').first().textContent(), '+0.0011');
+    assert.equal(await page.locator('.spectral-interpretation').first().textContent(), 'Interpretación almacenada de prueba.');
+    assert.equal(await page.locator('.spectral-badge').nth(1).textContent(), 'Sin valoración');
+    assert.equal(await page.locator('#indices-body .spectral-card').first().locator('dd').nth(1).textContent(), '0');
     assert.equal(await page.locator('.leaflet-draw').count(), 0);
     assert.equal(await page.locator('.leaflet-interactive').count() > 0, true);
     if (process.env.PARCEL_SCREENSHOT) await page.screenshot({ path: process.env.PARCEL_SCREENSHOT, fullPage: true });

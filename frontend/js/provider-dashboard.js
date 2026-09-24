@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     body.append(dl, node('h3', 'Historia'), node('p', farm.historia || 'Historia no disponible.', 'farm-story'));
     if (farm.ubicacionAtribucion) body.append(node('p', farm.ubicacionAtribucion, 'attribution'));
     const link = node('a', 'Ver perfil público y análisis disponible', 'button outline');
-    link.href = `/parcela.html?id=${encodeURIComponent(farm.farmId)}`;
+    link.href = `/parcela.html?id=${encodeURIComponent(farm.farmId)}&vista=proveedor`;
     body.append(link);
     details.append(summary, body);
     return details;

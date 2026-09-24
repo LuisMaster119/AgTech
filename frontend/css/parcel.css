@@ -28,6 +28,23 @@ thead { background: #eef2e8; }
 #seal-status { font-weight: 700; }
 #seal-criteria, #seal-pending { padding-left: 22px; line-height: 1.9; }
 .report-heading { display: none; }
+.spectral-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.indices-intro, .spectral-name { color: var(--muted); }
+.spectral-card { padding: 22px; border: 1px solid var(--border); border-radius: 15px; background: var(--cream); min-width: 0; overflow-wrap: anywhere; }
+.spectral-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.spectral-heading h4 { font-size: 23px; margin: 0; }
+.spectral-name { font-size: 12px; line-height: 1.5; margin: 3px 0 18px; }
+.spectral-badge { max-width: 45%; flex-shrink: 0; padding: 6px 8px; background: #e8eee7; color: var(--forest); border-radius: 7px; font-size: 11px; font-weight: 700; }
+.spectral-values { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 14px; padding: 14px; border: 1px solid var(--border); border-radius: 9px; background: white; }
+.spectral-values dt { font-size: 11px; text-transform: uppercase; color: var(--muted); }
+.spectral-values dd { margin: 5px 0 0; font: 600 18px 'JetBrains Mono', monospace; }
+.spectral-delta { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; background: #e7efe8; font-size: 12px; }
+.spectral-delta strong { font-family: 'JetBrains Mono', monospace; }
+.spectral-interpretation { border-left: 3px solid var(--secondary); padding-left: 12px; font-size: 13px; line-height: 1.7; }
+.spectral-environment { font-size: 12px; color: var(--muted); }
+.spectral-environment summary { cursor: pointer; color: var(--secondary); }
+@media (max-width: 900px) { .spectral-grid { grid-template-columns: 1fr; } }
+@media print { .spectral-grid { grid-template-columns: 1fr; } .spectral-card { break-inside: avoid; } }
 .seal-section .criteria-intro { color: var(--muted); max-width: 650px; }
 .seal-section .criteria-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 24px; }
 .seal-section .criteria-card { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 22px; min-width: 0; }

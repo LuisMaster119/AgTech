@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const $ = id => document.getElementById(id);
   const farmId = new URLSearchParams(window.location.search).get('id')?.trim();
+  const providerView = new URLSearchParams(window.location.search).get('vista') === 'proveedor';
   const text = (id, value) => { $(id).textContent = value; };
   const number = value => typeof value === 'number' && Number.isFinite(value)
     ? value.toLocaleString('es-MX', { maximumFractionDigits: 4 }) : 'No disponible';
@@ -14,9 +15,21 @@ document.addEventListener('DOMContentLoaded', () => {
     return Array.isArray(farms) && farms.some(farm => farm.farmId === farmId);
   }
   async function showAnalysisAction() {
-    try { $('run-analysis').hidden = !await canAnalyze(); }
-    catch { $('run-analysis').hidden = true; }
+    const section = document.querySelector('.seal-section');
+    section.hidden = true;
+    try {
+      const allowed = await canAnalyze();
+      $('run-analysis').hidden = !allowed;
+      section.hidden = !(providerView && allowed);
+    } catch { $('run-analysis').hidden = true; }
   }
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !analyzing) showAnalysisAction();
+  });
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) showAnalysisAction();
+  });
+  setInterval(() => { if (!analyzing) showAnalysisAction(); }, 60000);
   window.addEventListener('beforeunload', event => {
     if (analyzing) { event.preventDefault(); event.returnValue = ''; }
   });
@@ -191,18 +204,37 @@ document.addEventListener('DOMContentLoaded', () => {
       text('reference-period', `Periodo de referencia: ${period(analysis.periodoReferencia)}`);
       text('recent-period', `Periodo reciente: ${period(analysis.periodoReciente)}`);
       $('indices-body').replaceChildren();
+      const node = (tag, value, className) => {
+        const element = document.createElement(tag);
+        if (value != null) element.textContent = value;
+        if (className) element.className = className;
+        return element;
+      };
+      const names = { ndvi: 'Índice de Vegetación de Diferencia Normalizada', ndmi: 'Índice de Humedad de Diferencia Normalizada', ndbi: 'Índice de Suelo Desnudo y Degradación' };
       for (const index of ['ndvi', 'ndmi', 'ndbi']) {
-        const row = document.createElement('tr');
-        const heading = document.createElement('th');
-        heading.scope = 'row';
-        heading.textContent = index.toUpperCase();
-        row.append(heading);
-        for (const [range, area] of [['referencia', 'granja'], ['reciente', 'granja'], ['referencia', 'buffer'], ['reciente', 'buffer']]) {
-          const cell = document.createElement('td');
-          cell.textContent = number(analysis.indices?.[range]?.[`${index}_${area}`]);
-          row.append(cell);
+        const metric = Array.isArray(analysis.desglose)
+          ? analysis.desglose.find(item => String(item.indice).toLowerCase() === index) : null;
+        const card = node('article', null, 'spectral-card');
+        const header = node('div', null, 'spectral-heading');
+        const title = node('div');
+        title.append(node('h4', index.toUpperCase()), node('p', names[index], 'spectral-name'));
+        header.append(title, node('span', metric?.impacto || 'Sin valoración', 'spectral-badge'));
+        const values = node('dl', null, 'spectral-values');
+        for (const [label, range] of [['Línea base', 'referencia'], ['Reciente', 'reciente']]) {
+          const group = node('div');
+          group.append(node('dt', label), node('dd', number(analysis.indices?.[range]?.[`${index}_granja`])));
+          values.append(group);
         }
-        $('indices-body').append(row);
+        const delta = metric?.delta_relativo ?? analysis.deltas?.[`delta_${index}_relativo`];
+        const differential = node('div', null, 'spectral-delta');
+        differential.append(node('span', 'Diferencial vs. entorno (500 m)'),
+          node('strong', `${typeof delta === 'number' && delta > 0 ? '+' : ''}${number(delta)}`));
+        const environment = node('details', null, 'spectral-environment');
+        environment.append(node('summary', 'Ver valores del entorno'));
+        environment.append(node('p', `Línea base: ${number(analysis.indices?.referencia?.[`${index}_buffer`])} · Reciente: ${number(analysis.indices?.reciente?.[`${index}_buffer`])}`));
+        card.append(header, values, differential,
+          node('p', metric?.interpretacion || 'No hay una interpretación almacenada para este índice.', 'spectral-interpretation'), environment);
+        $('indices-body').append(card);
       }
       $('analysis-content').hidden = false;
       text('analysis-status', 'Resultados del último análisis almacenado.');

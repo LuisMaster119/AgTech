@@ -32,7 +32,7 @@ const assert = require('node:assert/strict');
   await page.waitForTimeout(100); assert.equal(posts, 1); release();
   await page.getByText('Análisis guardado.', { exact: false }).waitFor();
   assert.equal(await page.locator('#analysis-score').textContent(), '0 / 100');
-  assert.equal(await page.locator('#indices-body tr').count(), 3);
+  assert.equal(await page.locator('#indices-body .spectral-card').count(), 3);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   mode = 'error'; await button.click();
   await page.getByText('El servicio satelital no pudo completar', { exact: false }).waitFor();

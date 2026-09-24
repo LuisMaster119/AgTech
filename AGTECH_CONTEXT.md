@@ -17,6 +17,24 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Visibilidad de evaluación — 24 de septiembre de 2026: el bloque de criterios
+Tlalli inicia oculto y solo se muestra con `vista=proveedor` desde Mis parcelas
+y una sesión vigente cuya lista incluya la parcela. Catálogo, enlaces directos
+y QR no agregan ese parámetro y mantienen el bloque oculto, también al imprimir.
+Se revalida al recuperar la pestaña y periódicamente fuera de una ejecución.
+Es una regla de presentación, no autenticación real ni protección del endpoint
+público existente de evaluación. Verificación de navegador y commit pendientes
+por fallo de revisión automática de permisos (límite de uso).
+
+Tarjetas espectrales — 24 de septiembre de 2026: la tabla del micrositio se
+reemplaza por tres tarjetas NDVI/NDMI/NDBI con paleta Tlalli. Muestran línea base,
+valor reciente, impacto, diferencial e interpretación almacenados; los valores
+del entorno siguen disponibles en desplegables. No se recalcula ni se inventa
+una valoración si falta el desglose. Se conserva el resto de los módulos.
+Verificación inicial de navegador: tres tarjetas, cero, móvil y regresión del
+micrositio con datos de prueba. Las aserciones adicionales de diferencial e
+interpretación quedaron pendientes por fallo de revisión automática de permisos.
+
 Buscador de localidades — 24 de septiembre de 2026: Agregar parcela incorpora
 un control arriba a la derecha dentro del mapa. Reutiliza Nominatim mediante
 API.searchNominatim, con envío explícito (sin autocompletado), timeout de 15 s,
