@@ -149,12 +149,15 @@ const API = {
    * @param {string} query - Nombre del municipio o región
    * @returns {Promise<Array>} Resultados geocodificados [{ display_name, lat, lon, boundingbox }]
    */
-  async searchNominatim(query) {
+  async searchNominatim(query, { throwOnError = false } = {}) {
     if (!query || query.trim().length < 2) return [];
 
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
     try {
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
       const response = await fetch(url, {
+        signal: controller.signal,
         headers: {
           'Accept': 'application/json'
         }
@@ -167,8 +170,9 @@ const API = {
       return await response.json();
     } catch (error) {
       console.warn('Geocoding Warning (Nominatim):', error);
+      if (throwOnError) throw error;
       return [];
-    }
+    } finally { clearTimeout(timer); }
   }
 };
 

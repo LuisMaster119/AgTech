@@ -17,6 +17,14 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Buscador de localidades — 24 de septiembre de 2026: Agregar parcela incorpora
+un control arriba a la derecha dentro del mapa. Reutiliza Nominatim mediante
+API.searchNominatim, con envío explícito (sin autocompletado), timeout de 15 s,
+atribución, caché de hasta 30 consultas por pantalla y separación de peticiones.
+Seleccionar un resultado centra el mapa sin modificar el polígono ni completar
+el formulario. La disponibilidad depende del servicio externo. Verificación de
+navegador con búsqueda interceptada, selección, caché y regresión de dibujo/guardado.
+
 Traslado del análisis — 24 de septiembre de 2026: se retira el botón de ejecución
 de Mis parcelas y se coloca en Información ambiental del micrositio. Se muestra
 si existe sesión y la parcela figura en `/providers/me/farms`, comprobación que

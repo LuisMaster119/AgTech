@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       $('coordinate-preview').textContent = geometry.coordinates[0].map(point => `${point[0]}, ${point[1]}`).join('\n');
     });
     draw.disabled = false;
+    LocalitySearch.init(MapModule.map);
     MapModule.map.on('draw:drawstop', () => {
       if (!geometry) $('polygon-status').textContent = 'No hay un polígono confirmado. Pulsa Dibujar parcela para comenzar.';
     });

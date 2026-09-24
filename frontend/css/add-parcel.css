@@ -1,4 +1,14 @@
 .add-page { padding-block: 40px 60px; }
+.locality-search { width: min(360px, calc(100vw - 140px)); padding: 12px; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 3px 12px #012d1d22; font: 12px 'Plus Jakarta Sans', sans-serif; }
+.locality-search label { font-weight: 700; }
+.locality-row { display: flex; gap: 6px; align-items: center; }
+.locality-search input { min-width: 0; width: 100%; margin: 6px 0; padding: 9px; }
+.locality-search .button { padding: 9px; font-size: 12px; }
+.locality-search ul { list-style: none; padding: 0; margin: 0; max-height: 150px; overflow-y: auto; }
+.locality-search li button { width: 100%; background: var(--cream); border: 0; border-bottom: 1px solid var(--border); padding: 10px; text-align: left; font: inherit; color: var(--primary); cursor: pointer; overflow-wrap: anywhere; }
+.locality-search p { margin: 6px 0; overflow-wrap: anywhere; }
+.locality-search a { font-size: 10px; }
+@media (max-width: 480px) { .locality-row { flex-wrap: wrap; } .locality-search { padding: 8px; } }
 .add-page h1 { font-size: 40px; letter-spacing: -1.5px; }
 .draw-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
 .hidden { display: none !important; }
