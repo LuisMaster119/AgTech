@@ -17,6 +17,12 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Eliminación solicitada — 24 de septiembre de 2026: se eliminó de Firestore
+ag-tech la parcela «El Aguacate», ID 350b8a26-e16e-42aa-ac8c-0c2e1829265e.
+Se verificó coincidencia única, productor demo y ausencia de análisis asociados;
+el borrado se condicionó a la versión leída y se comprobó después su ausencia.
+Copia local en backups/deleted-el-aguacate-350b8a26.json, excluida de Git.
+
 Terminología de interfaz — 24 de septiembre de 2026: se usa «Productor» en
 lugar de «Proveedor» en los textos visibles del catálogo, acceso, Mis parcelas,
 alta y mensajes del micrositio. Las referencias históricas de este documento
