@@ -100,7 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (evaluation.farmId !== farmId || !['cumple', 'faltan_datos'].includes(evaluation.estado)
         || !Array.isArray(evaluation.criterios)) throw new Error('Respuesta inválida');
       text('seal-status', evaluation.estado === 'cumple'
-        ? 'Nivel I Base · Perfil documentado' : 'Nivel I Base · Faltan datos');
+        ? 'Perfil documentado · Revisión de evidencias pendiente' : 'Información del perfil incompleta · Revisión de evidencias pendiente');
+      text('trace-status', evaluation.estado === 'cumple' ? 'Perfil documentado' : 'Datos pendientes');
       text('seal-demo', evaluation.esDemostracion ? 'Caso de demostración · Evaluación con datos de ejemplo' : '');
       $('seal-demo').hidden = !evaluation.esDemostracion;
       text('seal-scope', evaluation.alcance);

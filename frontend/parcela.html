@@ -9,12 +9,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <link rel="stylesheet" href="/css/catalog.css">
-  <link rel="stylesheet" href="/css/parcel.css">
+  <link rel="stylesheet" href="/css/parcel.css?v=20260924-criteria">
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script defer src="/js/api.js"></script>
   <script defer src="/js/map.js"></script>
   <script defer src="/js/buffer-view.js"></script>
-  <script defer src="/js/parcel.js?v=20260924-2"></script>
+  <script defer src="/js/parcel.js?v=20260924-criteria"></script>
 </head>
 <body>
   <a class="skip-link" href="#parcel-main">Ir a la parcela</a>
@@ -30,14 +30,26 @@
       </div>
       <section class="map-section" aria-labelledby="map-title"><div class="section-heading"><h2 id="map-title">La parcela en el territorio</h2><span class="map-tag">Mapa de consulta</span></div><p id="map-status" role="status"></p><div id="map" aria-label="Polígono de la parcela"></div></section>
       <section class="profile-panel seal-section" aria-labelledby="seal-title">
-        <p class="eyebrow">INFORMACIÓN DEL PERFIL</p><h2 id="seal-title">Evaluación preliminar AgTech</h2>
+        <p class="eyebrow">CRITERIOS Y EVIDENCIAS</p><h2 id="seal-title">Evaluación de criterios Tlalli</h2>
+        <p class="criteria-intro">Conoce las áreas de revisión que sustentarían el certificado Tlalli.</p>
         <p id="seal-status" role="status">Consultando la evaluación del perfil…</p>
         <button id="seal-retry" class="button outline" hidden>Reintentar evaluación</button>
         <div id="seal-content" hidden>
           <p id="seal-demo" class="demo-badge" hidden></p>
-          <ul id="seal-criteria"></ul><p>La ciudad es opcional para parcelas rurales.</p>
-          <p id="seal-scope" class="analysis-note"></p><p id="seal-version" class="analysis-note"></p>
-          <h3>Niveles previstos, todavía no otorgados</h3><ul id="seal-pending"></ul>
+          <div class="criteria-grid">
+            <section class="criteria-card"><span class="material-symbols-outlined" aria-hidden="true">description</span><h3>Gestión y trazabilidad</h3><p id="trace-status" class="criteria-state"></p><p>Información registrada para identificar la parcela y su actividad.</p>
+              <details><summary>Ver criterios</summary><ul id="seal-criteria"></ul><p>La ciudad es opcional para parcelas rurales.</p><p><strong>Evidencia consultada:</strong> campos del perfil registrado.</p><p><strong>Observación:</strong> tener información completa no verifica su veracidad ni sustituye una revisión documental.</p></details>
+            </section>
+            <section class="criteria-card"><span class="material-symbols-outlined" aria-hidden="true">eco</span><h3>Gestión ambiental</h3><p class="criteria-state">Pendiente de evidencia</p><p>Prácticas de manejo y respaldo de las acciones ambientales.</p>
+              <details><summary>Ver criterios</summary><p class="criteria-example">Ejemplo de revisión · Prototipo</p><ul><li>Documentar el manejo de residuos e insumos.</li><li>Registrar acciones de conservación y su seguimiento.</li></ul><p><strong>Evidencia esperada:</strong> bitácoras de manejo, fotografías fechadas y registros de seguimiento.</p><p><strong>Observación de ejemplo:</strong> solicitar registros antes de evaluar las prácticas. El score satelital no acredita estos requisitos.</p></details>
+            </section>
+            <section class="criteria-card"><span class="material-symbols-outlined" aria-hidden="true">health_and_safety</span><h3>Seguridad y condiciones de trabajo</h3><p class="criteria-state">Pendiente de evidencia</p><p>Procedimientos y documentación sobre el trabajo en la parcela.</p>
+              <details><summary>Ver criterios</summary><p class="criteria-example">Ejemplo de revisión · Prototipo</p><ul><li>Identificar riesgos de las actividades y medidas preventivas.</li><li>Documentar capacitación y procedimientos de emergencia.</li></ul><p><strong>Evidencia esperada:</strong> registro de riesgos, constancias de capacitación y procedimientos.</p><p><strong>Observación de ejemplo:</strong> revisar documentos y su aplicación antes de emitir una valoración.</p></details>
+            </section>
+          </div>
+          <div class="criteria-result"><h3>Resultado de evaluación Tlalli</h3><p>Evidencias pendientes de revisión</p><p class="analysis-note">Prototipo de revisión documental. Las referencias ISO y su correspondencia con estos criterios están pendientes de definición y validación; no se acredita cumplimiento ISO.</p>
+            <details><summary>Consultar requisitos del certificado</summary><ol><li>Completar la información de trazabilidad.</li><li>Aportar evidencias de prácticas ambientales y condiciones de trabajo.</li><li>Revisar las evidencias con criterios definidos antes de emitir un resultado.</li></ol><p>La carga documental y la revisión por un evaluador todavía no están implementadas.</p><p id="seal-scope" class="analysis-note"></p><p id="seal-version" class="analysis-note"></p><p>Niveles previstos, todavía no otorgados:</p><ul id="seal-pending"></ul></details>
+          </div>
         </div>
       </section>
       <section class="analysis-section" aria-labelledby="analysis-title"><p class="eyebrow">INFORMACIÓN AMBIENTAL</p><h2 id="analysis-title">Último análisis disponible</h2><p id="analysis-status" role="status">Consultando el análisis almacenado…</p><button id="analysis-retry" class="button outline" hidden>Reintentar consulta del análisis</button>

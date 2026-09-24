@@ -17,6 +17,18 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Módulo de criterios — 24 de septiembre de 2026: se sustituye únicamente el bloque
+«Evaluación preliminar AgTech» por «Evaluación de criterios Tlalli». Tres tarjetas:
+gestión y trazabilidad (completitud del perfil mediante el endpoint existente),
+gestión ambiental y seguridad/condiciones de trabajo (criterios ilustrativos,
+evidencias esperadas y observaciones de ejemplo, sin documentos cargados).
+Los detalles son desplegables y el resultado permanece pendiente de revisión.
+No se atribuye cumplimiento a ISO: normas, correspondencias y reglas de emisión
+siguen pendientes de confirmación y validación. No hay carga documental ni revisor.
+Se mantienen intactos historia, información, mapa, análisis y contratos backend.
+El documento imprimible reutiliza este bloque, como ya hacía con la evaluación.
+La verificación de los 500 m fue reportada como correcta por el usuario.
+
 Ajuste visual — 24 de septiembre de 2026: se retiraron las etiquetas de demostración
 junto al nombre de las parcelas en catálogo, Mis parcelas y perfil público, y las
 flechas horizontales de los enlaces y botones. Se conserva la flecha diagonal del

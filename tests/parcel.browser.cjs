@@ -58,7 +58,13 @@ const share = JSON.parse(execFileSync('venv/Scripts/python.exe', ['-c',
     await page.locator('.buffer-zone').waitFor();
     assert.equal(await page.locator('#buffer-hatching').count(), 1);
     await page.locator('#seal-content:not([hidden])').waitFor();
-    assert.equal(await page.locator('#seal-status').textContent(), 'Nivel I Base · Perfil documentado');
+    assert.equal(await page.locator('#seal-status').textContent(), 'Perfil documentado · Revisión de evidencias pendiente');
+    assert.equal(await page.locator('.criteria-card').count(), 3);
+    assert.equal(await page.locator('#seal-title').textContent(), 'Evaluación de criterios Tlalli');
+    assert.equal(await page.locator('.criteria-card details[open]').count(), 0);
+    await page.locator('.criteria-card summary').nth(1).click();
+    await page.getByText('Evidencia esperada:', { exact: false }).first().waitFor();
+    await page.locator('.criteria-card summary').nth(1).click();
     assert.match(await page.locator('#seal-demo').textContent(), /Caso de demostración/);
     assert.equal(await page.locator('#seal-pending li').count(), 2);
     assert.equal(await page.locator('#seal-criteria li').count(), 8);
@@ -101,7 +107,7 @@ const share = JSON.parse(execFileSync('venv/Scripts/python.exe', ['-c',
     await page.getByText('Productor no disponible', { exact: true }).waitFor();
     assert.equal(await page.locator('#parcel-name img').count(), 0);
     assert.equal(await page.locator('#demo-label').count(), 0);
-    await page.getByText('Nivel I Base · Faltan datos', { exact: true }).waitFor();
+    await page.getByText('Información del perfil incompleta · Revisión de evidencias pendiente', { exact: true }).waitFor();
     assert.equal(await page.locator('#seal-demo').isVisible(), false);
     sealMode = 'error';
     await page.reload();

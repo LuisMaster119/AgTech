@@ -28,6 +28,20 @@ thead { background: #eef2e8; }
 #seal-status { font-weight: 700; }
 #seal-criteria, #seal-pending { padding-left: 22px; line-height: 1.9; }
 .report-heading { display: none; }
+.seal-section .criteria-intro { color: var(--muted); max-width: 650px; }
+.seal-section .criteria-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 24px; }
+.seal-section .criteria-card { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 22px; min-width: 0; }
+.seal-section .criteria-card > .material-symbols-outlined { color: var(--secondary); font-size: 28px; }
+.seal-section .criteria-card h3 { font-size: 17px; line-height: 1.4; }
+.seal-section .criteria-card p, .seal-section details { font-size: 13px; }
+.seal-section .criteria-state { display: inline-block; background: #e7efe8; color: var(--forest); border-radius: 8px; padding: 5px 9px; font-weight: 600; }
+.seal-section summary { cursor: pointer; color: var(--secondary); font-weight: 700; padding-block: 10px; }
+.seal-section summary:focus-visible { outline: 2px solid var(--secondary); outline-offset: 3px; }
+.seal-section .criteria-example { color: var(--muted); font-size: 12px; }
+.seal-section .criteria-result { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); }
+.seal-section .criteria-result h3 { margin-bottom: 5px; }
+@media (max-width: 900px) { .seal-section .criteria-grid { grid-template-columns: 1fr; } }
+@media print { .seal-section .criteria-grid { grid-template-columns: 1fr; } .seal-section .criteria-card { break-inside: avoid; } }
 .buffer-controls { margin-bottom: 15px; font-size: 13px; }
 .buffer-controls label { display: inline-flex; align-items: center; gap: 8px; }
 .buffer-controls input[type="checkbox"] { width: 18px; height: 18px; margin: 0; padding: 0; accent-color: #116c4a; }
