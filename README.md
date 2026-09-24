@@ -80,14 +80,37 @@ por parámetros. Las parcelas antiguas sin `providerId` siguen en el catálogo
 público pero no se asignan automáticamente al proveedor demo.
 
 El listado permite desplegar datos y abrir el perfil público con el análisis
-disponible. Incluye carga, vacío, errores y reintento. «Agregar parcela» avisa
-que el alta mediante dibujo corresponde al siguiente paso; no crea registros.
+disponible. Incluye carga, vacío, errores y reintento. «Agregar parcela» abre
+el formulario de alta mediante dibujo descrito a continuación.
 Si no hay parcelas asociadas a `demo-provider-001`, el listado estará vacío.
 Para datos ficticios puede ejecutarse manualmente la carga de semillas descrita
 abajo; esta etapa no las carga automáticamente.
 
 Prueba del dashboard: con servidor en 8010 y Playwright/Edge disponibles,
 `node tests/dashboard.browser.cjs`. Los datos se simulan sin escribir en Firestore.
+
+### Agregar parcela
+
+Después del login, abrir «Agregar parcela» en Mis parcelas. Acercar el mapa al
+terreno, pulsar «Dibujar parcela», marcar las esquinas y cerrar en el primer punto.
+Confirmar el polígono, completar el nombre y los datos opcionales, y guardar.
+Se pueden descartar o redibujar polígonos antes de guardar. No hay importadores.
+
+El formulario usa `POST /providers/me/farms` con la sesión actual. El servidor
+asigna el proveedor y el marcador demo, valida la geometría con el modelo
+existente y reutiliza la geocodificación configurada para ubicación faltante.
+No requiere cargar semillas; la identidad del proveedor demo viene de la sesión.
+La parcela se guarda realmente en Firestore y aparece también en el catálogo
+público. El endpoint anterior `POST /farms` conserva su contrato.
+
+Guardar no ejecuta Earth Engine ni genera análisis, sellos o certificados.
+Ante error o timeout se conserva el formulario: revisar Mis parcelas antes
+de repetir, ya que un reintento podría crear otro registro si el anterior se
+guardó pero su respuesta no llegó. Tras éxito se bloquea el envío y se ofrecen
+enlaces al listado y al perfil público.
+
+Prueba de navegador: `node tests/add-parcel.browser.cjs`, con servidor en 8010
+y Playwright/Edge. Dibuja mediante clics y simula el guardado sin escribir en nube.
 
 Prueba de navegador: iniciar el servidor con demo habilitado en puerto 8011 y
 ejecutar `node tests/auth.browser.cjs` con Playwright y Edge disponibles.

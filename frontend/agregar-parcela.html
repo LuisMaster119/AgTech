@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Agregar parcela · TerraSync AgTech</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
+<link rel="stylesheet" href="/css/catalog.css"><link rel="stylesheet" href="/css/add-parcel.css">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<script defer src="/js/auth.js"></script><script defer src="/js/map.js"></script><script defer src="/js/add-parcel.js"></script></head>
+<body><header class="site-header"><a class="brand" href="/">TerraSync<small>AGTECH</small></a><a class="button outline" href="/proveedor.html">← Mis parcelas</a></header>
+<main class="add-page"><p class="eyebrow">ESPACIO DEL PROVEEDOR</p><h1>Agregar parcela</h1><p id="session-status" role="status">Comprobando la sesión…</p>
+<div id="add-content" hidden><p>Las parcelas guardadas en esta sesión se marcarán como demostración y aparecerán en el catálogo público.</p>
+<h2>1. Dibuja y confirma el polígono</h2><p>Acerca el mapa a tu terreno antes de dibujar. Marca sus esquinas y cierra el polígono en el primer punto.</p>
+<div class="draw-actions"><button id="start-draw" class="button" disabled>Dibujar parcela</button><button id="cancel-draw" class="button outline">Descartar polígono</button><button id="confirm-polygon" class="button outline" disabled>Confirmar polígono</button></div>
+<p id="polygon-status" role="status">Cargando mapa…</p><div id="drawing-banner" class="drawing-banner hidden">Marca las esquinas de la parcela en el mapa. Cierra el dibujo pulsando el primer punto.</div><div id="map" aria-label="Mapa para dibujar la parcela"></div>
+<details><summary>Coordenadas del polígono (longitud, latitud)</summary><pre id="coordinate-preview"></pre></details>
+<form id="parcel-form"><fieldset id="form-fields"><h2>2. Completa la información</h2><p>El nombre es obligatorio. La ubicación faltante se completará al guardar si la geocodificación está configurada y hay datos disponibles.</p><div class="form-grid"><label>Nombre de la parcela *<input id="nombre" maxlength="150" required minlength="2"></label>
+<label>Productor<input id="productor" maxlength="150" ></label>
+<label>Actividad económica<input id="actividadEconomica" maxlength="250" ></label>
+<label>Ciudad<input id="ciudad" maxlength="150" ></label>
+<label>Municipio<input id="municipio" maxlength="150" ></label>
+<label>Estado<input id="estado" maxlength="150" ></label>
+<label>País<input id="pais" maxlength="150" ></label><label class="full-width">Historia<textarea id="historia" maxlength="5000"></textarea></label></div><button id="save-parcel" class="button" disabled>Guardar parcela</button></fieldset></form>
+<p id="save-status" role="status"></p><a id="login-link" href="/acceso.html" hidden>Volver a iniciar sesión</a>
+<section id="save-result" hidden><h2>Parcela guardada</h2><p id="saved-name"></p><p>No se ha ejecutado un análisis ambiental.</p><div class="draw-actions"><a class="button" href="/proveedor.html">Volver a Mis parcelas</a><a id="saved-profile" class="button outline">Ver perfil público</a></div></section>
+</div></main><footer><a class="brand" href="/">TerraSync <small>AGTECH</small></a></footer></body></html>

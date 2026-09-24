@@ -319,7 +319,7 @@ público requiere un solo worker y respetar su límite de consumo total.
 ficticias marcadas como demostración. No ejecuta análisis ni sobrescribe
 documentos existentes. No implica que las semillas hayan sido cargadas en nube.
 Se mantienen los registros antiguos sin migración obligatoria. Autenticación real y
-alta y edición del proveedor siguen pendientes; el catálogo público se describe
+edición del proveedor sigue pendiente; el catálogo público se describe
 en la siguiente etapa.
 
 Backend:
@@ -440,8 +440,7 @@ Los registros sin proveedor o de otro proveedor no se incluyen ni se reasignan.
 Cada parcela tiene información desplegable de productor, actividad, ubicación
 e historia, con enlace al perfil público y su análisis disponible. Se muestran
 datos faltantes, carga, listado vacío y errores con reintento. Una sesión vencida
-redirige al formulario. El botón «Agregar parcela · Próximamente» explica que
-el dibujo y registro se implementarán en la etapa 6; no ejecuta escrituras.
+redirige al formulario. El botón «Agregar parcela» abre el flujo de la etapa 6.
 
 Verificado con 37 pruebas Python y prueba de navegador con datos simulados en
 escritorio y móvil. No se cargaron semillas ni se modificaron datos de Firestore.
@@ -455,6 +454,30 @@ El acceso sigue siendo una demostración, no autenticación real.
 No implementar todavía el flujo completo de dibujo.
 
 ### 6. add-parcel-flow
+
+Implementado: `/agregar-parcela.html` exige la sesión demo y reutiliza el mapa
+Leaflet/Esri y Leaflet.draw existentes. Permite dibujar, descartar y confirmar
+un polígono, consultar sus coordenadas y completar nombre, productor, historia,
+actividad y ubicación. El nombre y la geometría son obligatorios. Redibujar
+invalida la confirmación anterior. No hay importación ni exportación.
+
+`POST /providers/me/farms` valida el modelo existente, asigna `providerId` y
+`esDemostracion` desde la sesión, completa ubicación mediante el servicio
+existente cuando está habilitado y guarda en `farms` de `ag-tech`. La identidad
+demo es la de la sesión: no requiere haber cargado las semillas ni crea un
+documento de proveedor al guardar. Los registros aparecen en Mis parcelas y
+en el catálogo público; no cambia el endpoint anterior `POST /farms`.
+
+Durante el guardado se bloquean los controles; un fallo conserva el formulario
+y pide revisar Mis parcelas antes de repetir una operación cuyo resultado no
+se pudo confirmar. El guardado no es idempotente entre reintentos. Tras éxito
+ofrece volver al listado o abrir el perfil público. No ejecuta análisis ni
+modifica el motor ambiental. Ejecución de análisis desde esta nueva pantalla,
+edición y autenticación real quedan fuera de este cambio.
+
+Verificación: 40 pruebas Python, dibujo mediante clics en navegador, confirmación,
+guardado simulado, error/reintento, vista móvil y navegación del dashboard.
+No se escribieron parcelas de prueba en Firestore ni se ejecutó Earth Engine.
 
 - Mapa para alta.
 - Dibujo y confirmación del polígono.

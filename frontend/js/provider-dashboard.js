@@ -67,5 +67,5 @@ document.addEventListener('DOMContentLoaded', () => {
     list.replaceChildren();
   });
   retry.addEventListener('click', load);
-  document.getElementById('add-parcel').addEventListener('click', () => document.getElementById('add-notice').showModal());
+  document.getElementById('add-parcel').addEventListener('click', () => { window.location.href = '/agregar-parcela.html'; });
 });
