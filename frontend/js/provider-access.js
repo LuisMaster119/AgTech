@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const content = document.getElementById('provider-content');
   const retry = document.getElementById('session-retry');
   const logout = document.getElementById('demo-logout');
+  let analysisPending = false;
+  document.addEventListener('provider-analysis-start', () => { analysisPending = true; });
+  document.addEventListener('provider-analysis-end', () => { analysisPending = false; });
   const errorText = error => error.status === 503
     ? 'El acceso de demostración está desactivado en este servidor.'
     : 'No pudimos conectar con el servidor. Inténtalo de nuevo.';
@@ -24,6 +27,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   async function checkSession() {
+    // El motor actual ocupa la petición hasta terminar; evitar comprobaciones
+    // periódicas que oculten el resultado por timeout mientras está trabajando.
+    if (analysisPending) return;
     content.hidden = true;
     retry.hidden = true;
     status.textContent = 'Comprobando la sesión…';

@@ -170,6 +170,20 @@ def test_analyze_farm_mocked(mock_ee_analyze):
     assert "desglose" in data
     assert len(data["desglose"]) == 3
 
+    # El mismo resultado guardado debe estar disponible en el micrositio.
+    mock_analysis_doc.set.assert_called_once()
+    stored = mock_analysis_doc.set.call_args.args[0]
+    assert stored == data
+    snapshot = MagicMock()
+    snapshot.to_dict.side_effect = lambda: dict(stored)
+    query = mock_analyses_col.where.return_value
+    query.order_by.return_value.limit.return_value.stream.return_value = [snapshot]
+    public = client.get('/farms/farm-123/certificate')
+    assert public.status_code == 200
+    assert public.json()['analysisId'] == data['analysisId']
+    assert public.json()['indices'] == data['indices']
+    mock_ee_analyze.assert_called_once()
+
     app.dependency_overrides.clear()
 
 

@@ -474,6 +474,29 @@ ofrece volver al listado o abrir el perfil público. No ejecuta análisis ni
 modifica el motor ambiental. Ejecución de análisis desde esta nueva pantalla,
 edición y autenticación real quedan fuera de este cambio.
 
+Complemento implementado: en «Mis parcelas», cada desplegable ofrece «Ejecutar
+análisis». Comprueba la sesión demo antes de enviar `POST /farms/{farm_id}/analyze`
+con los periodos predeterminados del motor existente. No se cambiaron el endpoint,
+sus permisos ni los cálculos. Este flujo no añade autenticación real ni control
+de propiedad al endpoint histórico.
+
+Muestra espera sin porcentaje (el backend no informa progreso), bloquea los botones
+de análisis mientras responde y permite hasta tres minutos de espera. Las comprobaciones
+periódicas de sesión se posponen durante esa petición para evitar ocultar el panel
+si el procesamiento ocupa el servidor. Al terminar muestra score, riesgo, resumen
+y periodos, con enlace al perfil público y su último análisis guardado. No ejecuta
+análisis automáticamente al guardar parcelas ni concede sellos ambientales.
+
+Un error de conexión, timeout o guardado pide consultar el perfil antes de repetir:
+el servidor puede continuar trabajando aunque el navegador deje de esperar. No hay
+cancelación de trabajo ni deduplicación entre pestañas o recargas. El caso demo
+conserva su etiqueta; el botón ejecuta el motor existente, no inventa resultados.
+
+Verificación del complemento: 49 pruebas Python, incluyendo guardado y lectura del
+mismo resultado con servicios sustituidos; pruebas Edge del análisis y regresión
+del dashboard (doble clic, éxito, errores, sesión vencida y móvil). No se ejecutó
+Earth Engine real ni se escribieron análisis en Firestore durante las pruebas.
+
 Verificación: 40 pruebas Python, dibujo mediante clics en navegador, confirmación,
 guardado simulado, error/reintento, vista móvil y navegación del dashboard.
 No se escribieron parcelas de prueba en Firestore ni se ejecutó Earth Engine.

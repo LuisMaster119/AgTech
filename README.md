@@ -47,6 +47,22 @@ Prueba adicional con el servidor de pruebas anterior en 8010:
 `node tests/parcel.browser.cjs`. Usa respuestas simuladas y comprueba navegación,
 mapa, resultados, vista móvil, errores, datos antiguos y ausencia de escrituras.
 
+### Ejecutar análisis desde Mis parcelas
+
+Abre el desplegable de una parcela y pulsa **Ejecutar análisis**. Comprueba la sesión
+demo y utiliza `POST /farms/{farm_id}/analyze` con los periodos predeterminados,
+sin cambiar el motor ni los permisos del endpoint anterior. Muestra espera sin
+porcentaje, score, riesgo, resumen y periodos; el enlace al perfil público permite
+consultar los índices del resultado guardado.
+
+La espera del navegador tiene un límite de tres minutos. Un corte o timeout no
+cancela el procesamiento del servidor: consulta el perfil antes de repetir.
+Se bloquean los botones mientras responde, sin deduplicación entre pestañas.
+No hay ejecución automática, datos ambientales inventados ni autenticación real.
+
+Pruebas con respuestas interceptadas: `node tests/provider-analysis.browser.cjs`
+y `node tests/dashboard.browser.cjs` (servidor local en 8010).
+
 ### Evaluación preliminar del perfil
 
 `GET /farms/{farm_id}/seal` evalúa Nivel I Base «Perfil documentado». Revisa ocho

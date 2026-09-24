@@ -2,10 +2,10 @@
 window.ProviderAuth = {
   key: 'agtech.demo.session',
   token() { return sessionStorage.getItem(this.key); },
-  async request(path, method = 'GET', body = undefined) {
+  async request(path, method = 'GET', body = undefined, timeoutMs = 15000) {
     const token = this.token();
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 15000);
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       if (body !== undefined) headers['Content-Type'] = 'application/json';

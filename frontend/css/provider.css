@@ -14,4 +14,8 @@
 .provider-farm-body dd { margin: 0; overflow-wrap: anywhere; }
 .farm-story { white-space: pre-wrap; overflow-wrap: anywhere; }
 #farms-status { color: var(--muted); }
+.provider-analysis { border-top: 1px solid var(--border); margin-top: 24px; padding-top: 12px; overflow-wrap: anywhere; }
+.provider-analysis-result { color: var(--primary); }
+.analysis-metric { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+.provider-analysis button:disabled { opacity: .6; cursor: wait; }
 @media (max-width: 640px) { .dashboard-toolbar { align-items: flex-start; flex-direction: column; } .dashboard h1 { font-size: 36px; } .expand-label { display: block; float: none; margin-top: 12px; } .provider-farm summary { padding: 18px; } .provider-farm-body { padding: 0 18px 18px; } .provider-farm-body dl { grid-template-columns: 1fr; gap: 5px; } .provider-farm-body dd { margin-bottom: 10px; } }
