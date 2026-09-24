@@ -26,6 +26,11 @@ no depende de las parcelas registradas y no implementa detección ni notificacio
 No cambia el análisis ambiental ni la autenticación. No se crearon registros en
 Firestore; Luis registrará las parcelas mediante el formulario existente.
 
+Limpieza del login — 24 de septiembre de 2026: por solicitud de Luis, se retira
+de `acceso.html` el bloque «Acceso de demostración» con la explicación y las
+credenciales visibles. El formulario, las credenciales aceptadas y el mecanismo
+de sesión existente no cambian; la autenticación real sigue pendiente.
+
 Luis pidió guardar el contexto y las instrucciones del agente para continuar
 desde otro dispositivo. No hay una implementación nueva en curso.
 
