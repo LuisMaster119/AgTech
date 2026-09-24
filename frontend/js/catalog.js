@@ -106,7 +106,6 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
     article.dataset.farmId = farm.farmId;
     const heading = element('div', null, 'card-heading');
     heading.append(element('span', 'PARCELA', 'parcel-label'));
-    if (farm.esDemostracion) heading.append(element('span', 'Demostración', 'demo-badge'));
     heading.append(element('h3', farm.nombre));
     const body = element('div', null, 'card-body');
     const dl = element('dl');
@@ -121,7 +120,7 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
     const mapButton = element('button', 'Ver en mapa', 'button');
     mapButton.setAttribute('aria-label', `Ver ${farm.nombre} en mapa`);
     mapButton.addEventListener('click', () => selectFarm(farm));
-    const profileButton = element('a', 'Conocer parcela →', 'button outline');
+    const profileButton = element('a', 'Conocer parcela', 'button outline');
     profileButton.setAttribute('aria-label', `Conocer ${farm.nombre}`);
     profileButton.href = `/parcela.html?id=${encodeURIComponent(farm.farmId)}`;
     actions.append(mapButton, profileButton);

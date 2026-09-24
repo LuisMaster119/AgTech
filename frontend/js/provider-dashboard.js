@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const details = node('details', null, 'provider-farm');
     const summary = node('summary');
     summary.append(node('span', farm.nombre, 'provider-farm-name'));
-    if (farm.esDemostracion) summary.append(node('span', 'Demostración', 'demo-badge'));
     summary.append(node('span', 'Ver información', 'expand-label'));
     const body = node('div', null, 'provider-farm-body');
     const dl = node('dl');
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     body.append(dl, node('h3', 'Historia'), node('p', farm.historia || 'Historia no disponible.', 'farm-story'));
     if (farm.ubicacionAtribucion) body.append(node('p', farm.ubicacionAtribucion, 'attribution'));
-    const link = node('a', 'Ver perfil público y análisis disponible →', 'button outline');
+    const link = node('a', 'Ver perfil público y análisis disponible', 'button outline');
     link.href = `/parcela.html?id=${encodeURIComponent(farm.farmId)}`;
     body.append(link);
     const analysis = node('section', null, 'provider-analysis');

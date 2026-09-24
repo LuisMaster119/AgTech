@@ -17,6 +17,12 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Ajuste visual — 24 de septiembre de 2026: se retiraron las etiquetas de demostración
+junto al nombre de las parcelas en catálogo, Mis parcelas y perfil público, y las
+flechas horizontales de los enlaces y botones. Se conserva la flecha diagonal del
+acceso de proveedores. El campo esDemostracion y los avisos de análisis, evaluación
+y sesión permanecen sin cambios; este ajuste solo afecta la presentación.
+
 Cambio de marca — 24 de septiembre de 2026: la marca pública de las páginas pasa
 a ser Tlalli, de Quetzalcode. Se actualizaron títulos, encabezados, pies, metadatos,
 acceso y encabezado del documento imprimible. Se conservan el diseño, los nombres

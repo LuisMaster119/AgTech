@@ -70,7 +70,7 @@ const share = JSON.parse(execFileSync('venv/Scripts/python.exe', ['-c',
     await page.emulateMedia({ media: 'print' });
     assert.equal(await page.locator('.report-heading').isVisible(), true);
     assert.equal(await page.locator('.map-section').isVisible(), false);
-    assert.equal(await page.locator('#demo-label').isVisible(), true);
+    assert.equal(await page.locator('#demo-label').count(), 0);
     assert.equal(await page.locator('#profile-qr').isVisible(), true);
     if (process.env.REPORT_SCREENSHOT) await page.screenshot({ path: process.env.REPORT_SCREENSHOT, fullPage: true });
     await page.emulateMedia({ media: 'screen' });
@@ -100,7 +100,7 @@ const share = JSON.parse(execFileSync('venv/Scripts/python.exe', ['-c',
     await page.reload();
     await page.getByText('Productor no disponible', { exact: true }).waitFor();
     assert.equal(await page.locator('#parcel-name img').count(), 0);
-    assert.equal(await page.locator('#demo-label').isVisible(), false);
+    assert.equal(await page.locator('#demo-label').count(), 0);
     await page.getByText('Nivel I Base · Faltan datos', { exact: true }).waitFor();
     assert.equal(await page.locator('#seal-demo').isVisible(), false);
     sealMode = 'error';
@@ -129,7 +129,7 @@ const share = JSON.parse(execFileSync('venv/Scripts/python.exe', ['-c',
     profileMode = 'full';
     await page.locator('#parcel-retry').click();
     await page.locator('#parcel-content:not([hidden])').waitFor();
-    await page.getByRole('link', { name: '← Volver al catálogo' }).click();
+    await page.getByRole('link', { name: 'Volver al catálogo' }).click();
     await page.getByRole('heading', { name: 'Explora las parcelas' }).waitFor();
     await page.goto('http://127.0.0.1:8010/parcela.html');
     await page.getByRole('heading', { name: 'Enlace de parcela incompleto' }).waitFor();

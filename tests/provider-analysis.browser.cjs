@@ -63,7 +63,7 @@ const assert = require('node:assert/strict');
     await rerun.click();
     await page.getByText('No pudimos confirmar el resultado.', { exact: false }).waitFor();
     assert.equal(await rerun.isDisabled(), false);
-    await page.getByRole('link', { name: 'Ver perfil público y análisis disponible →' }).first().click();
+    await page.getByRole('link', { name: 'Ver perfil público y análisis disponible' }).first().click();
     await page.locator('#analysis-content:not([hidden])').waitFor();
     assert.equal(await page.locator('#analysis-score').textContent(), '0 / 100');
     await page.goto('http://127.0.0.1:8010/proveedor.html');

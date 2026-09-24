@@ -75,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
     text('parcel-producer', farm.productor ? `Productor: ${farm.productor}` : 'Productor no disponible');
     text('parcel-activity', farm.actividadEconomica || 'Actividad económica no disponible');
     text('parcel-story', farm.historia || 'La historia de esta parcela todavía no está disponible.');
-    $('demo-label').hidden = !farm.esDemostracion;
     $('parcel-location').replaceChildren();
     for (const [label, key] of [['Ciudad', 'ciudad'], ['Municipio', 'municipio'], ['Estado', 'estado'], ['País', 'pais']]) {
       const dt = document.createElement('dt');
