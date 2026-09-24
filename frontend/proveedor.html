@@ -16,7 +16,13 @@
 <header class="site-header"><a class="brand" href="/">TerraSync<small>AGTECH</small></a><a class="button outline" href="/">← Volver al catálogo</a></header>
 <main class="dashboard"><p class="eyebrow">ESPACIO DEL PROVEEDOR</p><h1>Mis parcelas</h1><p id="access-status" role="status" aria-live="polite"></p><button id="session-retry" class="button outline" hidden>Reintentar sesión</button>
 <div id="provider-content" hidden><div class="dashboard-toolbar"><h2 id="provider-name"></h2><div class="dashboard-actions"><button id="add-parcel" class="button">Agregar parcela</button><button id="demo-logout" class="button outline">Cerrar sesión</button></div></div>
-<div class="demo-notice"><strong>Sesión de demostración</strong><p>Estás consultando las parcelas asociadas al proveedor ficticio. Este acceso no es autenticación real.</p></div>
+<section class="parcel-alerts" aria-labelledby="parcel-alerts-title">
+<h2 id="parcel-alerts-title">Alertas de parcelas</h2>
+<div class="parcel-alerts-grid">
+<article class="parcel-alert"><h3>Posible sequía <span>Atención preventiva</span></h3><p><strong>La Esperanza:</strong> Baja disponibilidad de agua. Revisar las condiciones del cultivo y la planificación del riego.</p></article>
+<article class="parcel-alert"><h3>Pérdida de cobertura arbórea <span>Revisión prioritaria</span></h3><p><strong>El Encino:</strong> Cambio de cobertura que requiere revisión para identificar posibles desmontes.</p></article>
+</div>
+</section>
 <p id="farms-status" role="status" aria-live="polite">Cargando tus parcelas…</p><button id="farms-retry" class="button outline" hidden>Reintentar carga de parcelas</button><div id="provider-farms" aria-busy="true"></div></div></main>
 
 <footer><a class="brand" href="/">TerraSync <small>AGTECH</small></a><p>Historias que nacen de la tierra.</p></footer>

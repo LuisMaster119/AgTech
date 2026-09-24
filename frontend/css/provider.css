@@ -3,6 +3,14 @@
 .dashboard-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 25px 0; }
 .dashboard-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 #provider-name { font-size: 20px; }
+.parcel-alerts { margin-block: 24px; padding: 24px; background: white; border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 4px 16px #012d1d06; }
+.parcel-alerts h2 { margin: 0 0 18px; font-size: 20px; }
+.parcel-alerts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px; }
+.parcel-alert { border-left: 3px solid #b7791f; padding-left: 16px; min-width: 0; }
+.parcel-alert h3 { margin: 0; font-size: 16px; line-height: 1.5; }
+.parcel-alert h3 span { display: block; color: #865614; font-size: 12px; font-weight: 600; margin-top: 4px; }
+.parcel-alert p { color: var(--muted); font-size: 14px; line-height: 1.7; margin: 10px 0 0; }
+.parcel-alert p strong { color: var(--primary); }
 .provider-farm { background: white; border: 1px solid var(--border); border-radius: 14px; margin-top: 16px; overflow: hidden; }
 .provider-farm summary { padding: 24px; cursor: pointer; }
 .provider-farm summary:focus-visible { outline: 3px solid var(--secondary); outline-offset: -4px; }

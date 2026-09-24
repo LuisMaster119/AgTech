@@ -17,6 +17,15 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Actualización puntual — 24 de septiembre de 2026: «Mis parcelas» reemplaza el
+aviso de sesión de demostración por un bloque visual «Alertas de parcelas», con
+textos fijos de posible sequía para La Esperanza y pérdida de cobertura arbórea
+para El Encino. Por decisión de Luis, el bloque no lleva etiquetas de demo ni
+de funcionalidad futura. Es un mock de interfaz: no consulta condiciones reales,
+no depende de las parcelas registradas y no implementa detección ni notificaciones.
+No cambia el análisis ambiental ni la autenticación. No se crearon registros en
+Firestore; Luis registrará las parcelas mediante el formulario existente.
+
 Luis pidió guardar el contexto y las instrucciones del agente para continuar
 desde otro dispositivo. No hay una implementación nueva en curso.
 
