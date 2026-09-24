@@ -17,6 +17,17 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Traslado del análisis — 24 de septiembre de 2026: se retira el botón de ejecución
+de Mis parcelas y se coloca en Información ambiental del micrositio. Se muestra
+si existe sesión y la parcela figura en `/providers/me/farms`, comprobación que
+se repite al pulsarlo. Es visibilidad de interfaz, no nueva autorización backend;
+el endpoint histórico conserva sus permisos y la sesión sigue siendo demo.
+La respuesta del POST se muestra directamente en el mismo bloque, sin navegación.
+Se conservan espera de tres minutos, bloqueo de doble clic, errores y reconsulta
+del resultado almacenado. Visitantes consultan sin ejecutar; no hay ejecución
+automática. Historia, mapa, criterios y cálculos permanecen sin cambios.
+Verificado con pruebas de navegador de ejecución, dashboard y micrositio con mocks.
+
 Módulo de criterios — 24 de septiembre de 2026: se sustituye únicamente el bloque
 «Evaluación preliminar AgTech» por «Evaluación de criterios Tlalli». Tres tarjetas:
 gestión y trazabilidad (completitud del perfil mediante el endpoint existente),

@@ -4,11 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const retry = document.getElementById('farms-retry');
   let providerId = null;
   let generation = 0;
-  let analyzing = false;
-  const analysisButtons = new Set();
-  window.addEventListener('beforeunload', event => {
-    if (analyzing) { event.preventDefault(); event.returnValue = ''; }
-  });
   function node(tag, text, className) {
     const element = document.createElement(tag);
     if (text != null) element.textContent = text;
@@ -31,62 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const link = node('a', 'Ver perfil público y análisis disponible', 'button outline');
     link.href = `/parcela.html?id=${encodeURIComponent(farm.farmId)}`;
     body.append(link);
-    const analysis = node('section', null, 'provider-analysis');
-    const run = node('button', 'Ejecutar análisis', 'button');
-    run.type = 'button';
-    analysisButtons.add(run);
-    const message = node('p', 'Usa los periodos predeterminados del motor satelital. El resultado se guardará y será visible en el perfil público.');
-    message.setAttribute('role', 'status');
-    const result = node('div', null, 'provider-analysis-result');
-    analysis.append(node('h3', 'Análisis satelital'), run, message, result);
-    if (farm.esDemostracion) analysis.append(node('p', 'Caso de demostración: este botón ejecuta el motor satelital sobre el polígono registrado; no genera datos de ejemplo.', 'attribution'));
-    body.append(analysis);
-    run.addEventListener('click', async () => {
-      if (analyzing) return;
-      analyzing = true;
-      for (const button of analysisButtons) button.disabled = true;
-      document.dispatchEvent(new Event('provider-analysis-start'));
-      analysis.setAttribute('aria-busy', 'true');
-      result.replaceChildren();
-      message.textContent = 'Comprobando la sesión…';
-      let submitted = false;
-      try {
-        const provider = await ProviderAuth.currentProvider();
-        if (provider.providerId !== providerId) throw new Error('La sesión cambió');
-        message.textContent = 'Procesando imágenes satelitales y guardando el resultado… Puede tardar varios minutos. Mantén esta página abierta.';
-        submitted = true;
-        const data = await ProviderAuth.request(`/farms/${encodeURIComponent(farm.farmId)}/analyze`, 'POST', {}, 180000);
-        if (data.farmId !== farm.farmId || !data.analysisId || !Number.isFinite(data.score)) throw new Error('Respuesta inválida');
-        result.append(node('p', `Score ecológico: ${data.score.toLocaleString('es-MX', { maximumFractionDigits: 2 })} / 100 · Riesgo: ${data.nivelRiesgo}`, 'analysis-metric'));
-        result.append(node('p', data.resumenEjecutivo || 'Resumen no disponible.'));
-        for (const [label, period] of [['Referencia', data.periodoReferencia], ['Reciente', data.periodoReciente]]) {
-          result.append(node('p', `${label}: ${period?.inicio || 'No disponible'} — ${period?.fin || 'No disponible'}`));
-        }
-        message.textContent = 'Análisis guardado. Abre el perfil público para consultar los índices y el detalle.';
-        run.textContent = 'Ejecutar nuevo análisis';
-      } catch (error) {
-        if (error.status === 401) {
-          window.location.replace('/acceso.html');
-          return;
-        }
-        message.textContent = !submitted ? 'No pudimos comprobar la sesión. Inténtalo de nuevo.'
-          : error.status === 502 ? 'El servicio satelital no pudo completar el análisis. Puedes intentarlo de nuevo.'
-          : error.status === 404 ? 'La parcela ya no está disponible. Recarga Mis parcelas.'
-          : 'No pudimos confirmar el resultado. El servidor podría seguir procesando o haberlo guardado. Consulta el perfil público antes de ejecutar otro análisis.';
-      } finally {
-        analyzing = false;
-        analysis.setAttribute('aria-busy', 'false');
-        for (const button of analysisButtons) button.disabled = false;
-        document.dispatchEvent(new Event('provider-analysis-end'));
-      }
-    });
     details.append(summary, body);
     return details;
   }
   async function load() {
     const current = ++generation;
     list.replaceChildren();
-    analysisButtons.clear();
+
     list.setAttribute('aria-busy', 'true');
     retry.hidden = true;
     status.textContent = 'Cargando tus parcelas…';

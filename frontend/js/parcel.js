@@ -1,4 +1,4 @@
-/* Micrositio público: lee perfil y análisis almacenado, nunca los modifica. */
+/* Consulta pública; ejecución explícita para proveedor con sesión demo. */
 document.addEventListener('DOMContentLoaded', () => {
   const $ = id => document.getElementById(id);
   const farmId = new URLSearchParams(window.location.search).get('id')?.trim();
@@ -7,6 +7,51 @@ document.addEventListener('DOMContentLoaded', () => {
     ? value.toLocaleString('es-MX', { maximumFractionDigits: 4 }) : 'No disponible';
   const period = value => value?.inicio && value?.fin ? `${value.inicio} — ${value.fin}` : 'No disponible';
   let mapInitialized = false;
+  let analyzing = false, readingAnalysis = false;
+  async function canAnalyze() {
+    if (!ProviderAuth.token()) return false;
+    const farms = await ProviderAuth.request('/providers/me/farms');
+    return Array.isArray(farms) && farms.some(farm => farm.farmId === farmId);
+  }
+  async function showAnalysisAction() {
+    try { $('run-analysis').hidden = !await canAnalyze(); }
+    catch { $('run-analysis').hidden = true; }
+  }
+  window.addEventListener('beforeunload', event => {
+    if (analyzing) { event.preventDefault(); event.returnValue = ''; }
+  });
+  async function runAnalysis() {
+    if (analyzing || readingAnalysis) return;
+    analyzing = true;
+    $('run-analysis').disabled = true;
+    $('analysis-retry').disabled = true;
+    let submitted = false;
+    text('run-status', 'Comprobando la sesión…');
+    try {
+      if (!await canAnalyze()) {
+        $('run-analysis').hidden = true;
+        text('run-status', 'Inicia sesión como proveedor de esta parcela para ejecutar el análisis.');
+        return;
+      }
+      submitted = true;
+      text('run-status', 'Procesando imágenes satelitales y guardando el resultado… Puede tardar varios minutos.');
+      const result = await ProviderAuth.request(`/farms/${encodeURIComponent(farmId)}/analyze`, 'POST', {}, 180000);
+      if (result.farmId !== farmId || !result.analysisId || !Number.isFinite(result.score)) throw new Error('Respuesta inválida');
+      await loadAnalysis(result);
+      text('run-status', 'Análisis guardado. Ya puedes consultar el resultado aquí.');
+    } catch (error) {
+      if (error.status === 401) $('run-analysis').hidden = true;
+      text('run-status', error.status === 401 ? 'Tu sesión venció. Vuelve a iniciar sesión como proveedor.'
+        : !submitted ? 'No pudimos comprobar la sesión. Inténtalo de nuevo.'
+        : error.status === 502 ? 'El servicio satelital no pudo completar el análisis. Puedes intentarlo de nuevo.'
+        : 'No pudimos confirmar el resultado. El servidor podría seguir procesando. Consulta el análisis almacenado antes de repetir.');
+      if (submitted) $('analysis-retry').hidden = false;
+    } finally {
+      analyzing = false;
+      $('run-analysis').disabled = false;
+      $('analysis-retry').disabled = false;
+    }
+  }
   let analysisReady = false, sealReady = false, shareReady = false;
   function updateReport() {
     const ready = analysisReady && sealReady && shareReady;
@@ -126,14 +171,16 @@ document.addEventListener('DOMContentLoaded', () => {
     } finally { updateReport(); }
   }
 
-  async function loadAnalysis() {
+  async function loadAnalysis(savedResult = null) {
+    readingAnalysis = true;
+    $('run-analysis').disabled = true;
     analysisReady = false; updateReport();
     $('analysis-content').hidden = true;
     $('analysis-retry').hidden = true;
     document.querySelector('.analysis-section').setAttribute('aria-busy', 'true');
     text('analysis-status', 'Consultando el análisis almacenado…');
     try {
-      const analysis = await API.getFarmAnalysis(farmId);
+      const analysis = savedResult || await API.getFarmAnalysis(farmId);
       if (!analysis || analysis.farmId !== farmId) throw new Error('Respuesta inválida');
       text('analysis-score', `${number(analysis.score)}${typeof analysis.score === 'number' ? ' / 100' : ''}`);
       text('analysis-risk', `Riesgo ecológico: ${analysis.nivelRiesgo || 'No disponible'}`);
@@ -161,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
       text('analysis-status', 'Resultados del último análisis almacenado.');
       text('report-analysis-id', `Análisis: ${analysis.analysisId || 'Identificador no disponible'} · Fecha: ${analysis.fechaCreacion || 'No disponible'}`);
       analysisReady = Boolean(analysis.analysisId);
+      text('run-analysis', 'Ejecutar nuevo análisis');
     } catch (error) {
       text('analysis-status', error.status === 404 ? 'No hay un análisis disponible para esta parcela.'
         : 'No pudimos consultar el análisis. Puedes seguir consultando la información de la parcela.');
@@ -168,6 +216,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } finally {
       document.querySelector('.analysis-section').setAttribute('aria-busy', 'false');
       updateReport();
+      readingAnalysis = false;
+      $('run-analysis').disabled = analyzing;
     }
   }
 
@@ -183,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loadAnalysis();
       loadSeal();
       loadShare();
+      showAnalysisAction();
     } catch (error) {
       showState(error.status === 404 ? 'Parcela no encontrada' : 'No pudimos cargar la parcela',
         error.status === 404 ? 'Revisa el enlace o vuelve al catálogo para elegir otra parcela.'
@@ -192,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   $('parcel-retry').addEventListener('click', load);
-  $('analysis-retry').addEventListener('click', loadAnalysis);
+  $('analysis-retry').addEventListener('click', () => loadAnalysis());
+  $('run-analysis').addEventListener('click', runAnalysis);
   $('seal-retry').addEventListener('click', loadSeal);
   $('share-retry').addEventListener('click', loadShare);
   $('print-report').addEventListener('click', () => {
