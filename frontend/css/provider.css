@@ -11,22 +11,32 @@
 .parcel-alert h3 span { display: block; color: #865614; font-size: 12px; font-weight: 600; margin-top: 4px; }
 .parcel-alert p { color: var(--muted); font-size: 14px; line-height: 1.7; margin: 10px 0 0; }
 .parcel-alert p strong { color: var(--primary); }
-.provider-farm { background: white; border: 1px solid var(--border); border-radius: 14px; margin-top: 16px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 34%); align-items: start; }
-.provider-farm-details { min-width: 0; }
-.provider-farm .parcel-preview { margin: 16px 16px 16px 0; border-radius: 10px; }
-.provider-farm summary { padding: 24px; cursor: pointer; list-style: none; }
-.provider-farm summary::-webkit-details-marker { display: none; }
-.provider-farm summary:focus-visible { outline: 3px solid var(--secondary); outline-offset: -4px; }
-.provider-farm-name { font-size: 18px; font-weight: 700; overflow-wrap: anywhere; }
-.expand-label { display: block; margin-top: 7px; color: var(--secondary); font-size: 12px; }
-.provider-farm-body { padding: 0 24px 24px; }
-.provider-farm-body dl { display: grid; grid-template-columns: 140px 1fr; gap: 10px; }
-.provider-farm-body dt { color: var(--muted); }
-.provider-farm-body dd { margin: 0; overflow-wrap: anywhere; }
-.farm-story { white-space: pre-wrap; overflow-wrap: anywhere; }
+.provider-farm { position: relative; background: white; border: 1px solid var(--border); border-radius: 14px; margin-top: 16px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(220px, 34%); align-items: center; gap: 24px; padding: 20px; }
+.provider-farm:hover { border-color: var(--secondary); box-shadow: 0 5px 20px #012d1d0c; }
+.provider-farm-heading { min-width: 0; }
+.provider-farm-name { margin: 0; font-size: 18px; font-weight: 700; overflow-wrap: anywhere; }
+.provider-farm-link { text-decoration: none; }
+.provider-farm-link::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+.provider-farm-link:focus-visible { outline: none; }
+.provider-farm:has(.provider-farm-link:focus-visible) { outline: 3px solid var(--secondary); outline-offset: 3px; }
+.provider-farm-hint { display: block; margin-top: 7px; color: var(--secondary); font-size: 12px; }
+.provider-farm-info { margin: 0; display: grid; gap: 10px; min-width: 0; }
+.provider-farm-info dt { color: var(--muted); font-size: 11px; }
+.provider-farm-info dd { margin: 2px 0 0; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.provider-farm .parcel-preview { border-radius: 10px; width: 100%; }
+.provider-farm .preview-attribution { z-index: 2; }
 #farms-status { color: var(--muted); }
 .provider-analysis { border-top: 1px solid var(--border); margin-top: 24px; padding-top: 12px; overflow-wrap: anywhere; }
 .provider-analysis-result { color: var(--primary); }
 .analysis-metric { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 .provider-analysis button:disabled { opacity: .6; cursor: wait; }
-@media (max-width: 640px) { .dashboard-toolbar { align-items: flex-start; flex-direction: column; } .dashboard h1 { font-size: 36px; } .provider-farm { grid-template-columns: minmax(0, 1fr) 42%; } .provider-farm .parcel-preview { margin: 14px 12px 14px 0; } .provider-farm summary { padding: 18px 12px; } .provider-farm-name { font-size: 16px; } .provider-farm .preview-status { font-size: 10px; padding: 8px; } .provider-farm-body { padding: 0 12px 18px; } .provider-farm-body dl { grid-template-columns: 1fr; gap: 5px; } .provider-farm-body dd { margin-bottom: 10px; } }
+@media (max-width: 640px) {
+  .dashboard-toolbar { align-items: flex-start; flex-direction: column; }
+  .dashboard h1 { font-size: 36px; }
+  .provider-farm { grid-template-columns: minmax(0, 1fr) 42%; gap: 16px 12px; padding: 16px 12px; align-items: start; }
+  .provider-farm-heading { grid-column: 1; grid-row: 1; }
+  .provider-farm-info { grid-column: 1; grid-row: 2; }
+  .provider-farm .parcel-preview { grid-column: 2; grid-row: 1 / 3; }
+  .provider-farm-name { font-size: 16px; }
+  .provider-farm .preview-status { font-size: 10px; padding: 8px; }
+}

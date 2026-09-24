@@ -17,6 +17,17 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Tarjetas directas del proveedor — 24 de septiembre de 2026: reemplazan el
+desplegable anterior por nombre, actividad económica/municipio/estado/país en
+la columna central e imagen a la derecha. «Ver parcela» sustituye «Mostrar
+información». Pulsar la tarjeta abre el micrositio con vista=proveedor; el enlace
+de atribución de Esri sigue independiente. En móvil los datos quedan debajo del
+nombre y la imagen a la derecha. Los datos ausentes indican «No disponible».
+Verificado con navegador Edge y datos simulados: posición, cuatro campos,
+navegación por teclado y clic sobre imagen, móvil, imagen fallida, estados de
+carga y sesión; sintaxis, diff y capturas revisados. No cambia backend, análisis,
+buffer ni la información almacenada; historia y demás detalles se ven en el perfil.
+
 Fotos del proveedor — 24 de septiembre de 2026: las tarjetas de Mis parcelas
 reutilizan ParcelPreview con imagen satelital y polígono a la derecha, sin buffer.
 «Mostrar información» aparece pequeño bajo el nombre y cambia a «Ocultar

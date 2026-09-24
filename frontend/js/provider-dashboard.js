@@ -12,25 +12,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function card(farm) {
     const article = node('article', null, 'provider-farm');
-    const details = node('details', null, 'provider-farm-details');
-    const summary = node('summary');
-    summary.append(node('span', farm.nombre, 'provider-farm-name'));
-    const label = node('span', 'Mostrar información', 'expand-label');
-    summary.append(label);
-    details.addEventListener('toggle', () => { label.textContent = details.open ? 'Ocultar información' : 'Mostrar información'; });
-    const body = node('div', null, 'provider-farm-body');
-    const dl = node('dl');
-    for (const [label, value] of [['Productor', farm.productor], ['Actividad económica', farm.actividadEconomica],
-      ['Ciudad', farm.ciudad], ['Municipio', farm.municipio], ['Estado', farm.estado], ['País', farm.pais]]) {
-      dl.append(node('dt', label), node('dd', value || 'No disponible'));
-    }
-    body.append(dl, node('h3', 'Historia'), node('p', farm.historia || 'Historia no disponible.', 'farm-story'));
-    if (farm.ubicacionAtribucion) body.append(node('p', farm.ubicacionAtribucion, 'attribution'));
-    const link = node('a', 'Ver perfil público y análisis disponible', 'button outline');
+    const heading = node('div', null, 'provider-farm-heading');
+    const title = node('h3', null, 'provider-farm-name');
+    const link = node('a', farm.nombre, 'provider-farm-link');
     link.href = `/parcela.html?id=${encodeURIComponent(farm.farmId)}&vista=proveedor`;
-    body.append(link);
-    details.append(summary, body);
-    article.append(details, ParcelPreview.create(farm));
+    title.append(link);
+    heading.append(title, node('span', 'Ver parcela', 'provider-farm-hint'));
+    const info = node('dl', null, 'provider-farm-info');
+    for (const [label, value] of [['Actividad económica', farm.actividadEconomica],
+      ['Municipio', farm.municipio], ['Estado', farm.estado], ['País', farm.pais]]) {
+      const item = node('div');
+      item.append(node('dt', label), node('dd', value || 'No disponible'));
+      info.append(item);
+    }
+    article.append(heading, info, ParcelPreview.create(farm));
     return article;
   }
   async function load() {
