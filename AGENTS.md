@@ -70,7 +70,7 @@
 
 ## Identidad visual
 
-- Mantener la identidad TerraSync/AgTech.
+- Mantener la identidad Tlalli, de Quetzalcode, y el diseño visual existente.
 - Conservar los colores #012d1d, #116c4a, #1b4332 y #a1f4c8.
 - Usar fondos crema y superficies blancas o crema.
 - Mantener Plus Jakarta Sans para interfaz y JetBrains Mono para métricas.

@@ -2,7 +2,7 @@
 
 ## Perfiles públicos de parcelas
 
-La portada `/` es el catálogo público TerraSync: tarjetas con datos de `GET /farms`,
+La portada `/` es el catálogo público Tlalli, de Quetzalcode: tarjetas con datos de `GET /farms`,
 búsqueda sin distinguir acentos y filtros combinados por estado y actividad.
 Los polígonos se muestran en el mapa satelital existente en modo de consulta.
 No permite crear parcelas ni ejecutar análisis. «Conocer parcela» abre el

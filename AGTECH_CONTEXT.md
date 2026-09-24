@@ -17,6 +17,13 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Cambio de marca — 24 de septiembre de 2026: la marca pública de las páginas pasa
+a ser Tlalli, de Quetzalcode. Se actualizaron títulos, encabezados, pies, metadatos,
+acceso y encabezado del documento imprimible. Se conservan el diseño, los nombres
+de los sellos AgTech y los identificadores técnicos existentes. Las menciones
+históricas a TerraSync en este documento describen la marca anterior.
+
+
 Actualización puntual — 24 de septiembre de 2026: «Mis parcelas» reemplaza el
 aviso de sesión de demostración por un bloque visual «Alertas de parcelas», con
 textos fijos de posible sequía para La Esperanza y pérdida de cobertura arbórea
@@ -304,7 +311,7 @@ las pruebas correspondientes.
 
 ## 11. Identidad visual
 
-Mantener la identidad TerraSync/AgTech.
+Mantener la identidad Tlalli, de Quetzalcode, y el diseño visual existente.
 
 Colores:
 - Primary: #012d1d

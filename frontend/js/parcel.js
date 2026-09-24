@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showProfile(farm) {
-    document.title = `${farm.nombre} · TerraSync AgTech`;
+    document.title = `${farm.nombre} · Tlalli · Quetzalcode`;
     text('parcel-name', farm.nombre);
     text('parcel-producer', farm.productor ? `Productor: ${farm.productor}` : 'Productor no disponible');
     text('parcel-activity', farm.actividadEconomica || 'Actividad económica no disponible');
