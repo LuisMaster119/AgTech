@@ -8,6 +8,7 @@ from google.cloud import firestore
 from app.database import get_db
 from app.config import settings
 from app.services.sharing import profile_share
+from app.services.buffer_view import get_buffer_geometry
 from app.models.farm import FarmCreate, FarmResponse
 from app.models.seal import SealEvaluation
 from app.services.seals import evaluate_profile
@@ -111,6 +112,22 @@ async def get_farm(
             detail=f"Granja con ID '{farm_id}' no encontrada."
         )
     return FarmResponse(**doc.to_dict())
+
+
+@router.get("/{farm_id}/buffer", summary="Consultar geometría del entorno de 500 m")
+def get_farm_buffer(farm_id: str, db: firestore.Client = Depends(get_db)):
+    try:
+        doc = db.collection('farms').document(farm_id).get()
+    except Exception:
+        raise HTTPException(status_code=503, detail='No se pudo consultar la parcela.')
+    if not doc.exists:
+        raise HTTPException(status_code=404, detail='Parcela no encontrada.')
+    try:
+        geometry = get_buffer_geometry(doc.to_dict().get('geojson') or {})
+    except Exception:
+        logger.exception('No se pudo obtener la geometría del entorno')
+        raise HTTPException(status_code=502, detail='No se pudo consultar el entorno de 500 m.')
+    return {'farmId': farm_id, 'distanciaMetros': 500, 'geojson': geometry}
 
 
 @router.get("/{farm_id}/share", summary="Consultar enlace y QR del perfil público")

@@ -37,8 +37,8 @@ caso ni aportó registros. No atribuir al agente una ejecución real de Earth En
 Firestore o escaneo físico del QR. La última verificación automatizada del agente
 fue de 55 pruebas Python y pruebas de navegador con datos interceptados.
 
-Siguiente etapa prevista: 9, `buffer-zone-and-moisture`. Empezar por definir un
-cambio pequeño para visualizar el entorno de 500 m; humedad y recomendaciones
+Etapa 9 iniciada: el micrositio muestra el entorno de 500 m en ámbar con rayas
+diagonales y control de visibilidad. Humedad y recomendaciones
 requieren criterios concretos antes de implementarse. No modificar NDVI, NDMI,
 NDBI, scoring ni el buffer utilizado por el análisis. Este registro no autoriza
 iniciar automáticamente esa etapa: atender el siguiente prompt de Luis.
@@ -628,6 +628,20 @@ de impresión del navegador.
 No crear otro sistema de autenticación.
 
 ### 9. buffer-zone-and-moisture
+
+Implementado: capa de consulta en el micrositio público, color ámbar y textura
+diagonal diferenciados del verde de la parcela. Incluye leyenda, control para
+mostrar/ocultar, encuadre del entorno y error con reintento sin ocultar el perfil.
+`GET /farms/{farm_id}/buffer` lee la parcela y consulta exclusivamente su geometría
+en Earth Engine: `buffer(500).difference(farm, maxError=1)`, igual que el motor.
+Admite Polygon y MultiPolygon de respuesta. No calcula índices, escribe datos
+ni modifica earth_engine.py o scoring. La consulta requiere credenciales y acceso
+a Earth Engine; si falla, no se dibuja una geometría aproximada ni inventada.
+La capa se excluye de impresión junto con el mapa existente.
+
+Verificación: 57 pruebas Python; navegador con geometría de prueba para rayado,
+visibilidad, error/reintento y regresión del micrositio en móvil. No se consultó
+Earth Engine real durante estas pruebas. Humedad y recomendaciones siguen pendientes.
 
 - Visualización de zona limítrofe.
 - Funcionalidades adicionales de humedad.

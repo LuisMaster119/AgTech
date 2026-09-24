@@ -19,6 +19,13 @@ const share = JSON.parse(execFileSync('venv/Scripts/python.exe', ['-c',
     const analysis = { farmId: 'demo', score: 0, nivelRiesgo: 'Alto', fechaCreacion: '2026-09-01T12:00:00Z', resumenEjecutivo: 'Resultado de prueba para verificar la visualización.', periodoReferencia: { inicio: '2024-01-01', fin: '2024-06-30' }, periodoReciente: { inicio: '2026-01-01', fin: '2026-06-30' }, indices: { referencia: { ndvi_granja: .7, ndvi_buffer: .75, ndmi_granja: .2, ndmi_buffer: .3, ndbi_granja: -.2, ndbi_buffer: -.3 }, reciente: { ndvi_granja: 0, ndvi_buffer: .74, ndmi_granja: -.1, ndmi_buffer: .2, ndbi_granja: .2, ndbi_buffer: -.2 } } };
     analysis.analysisId = 'analysis-test-001';
     await page.route('**/farms', route => route.fulfill({ json: [farm] }));
+    let bufferMode = 'error';
+    await page.route('**/farms/demo/buffer', route => route.fulfill({ status: bufferMode === 'error' ? 502 : 200, json: {
+      farmId: 'demo', distanciaMetros: 500, geojson: { type: 'Polygon', coordinates: [
+        [[-88.405,18.695],[-88.385,18.695],[-88.385,18.715],[-88.405,18.715],[-88.405,18.695]],
+        farm.geojson.coordinates[0]
+      ] }
+    } }));
     await page.route('**/farms/demo/seal', route => route.fulfill({ status: sealMode === 'error' ? 503 : 200, json: {
       farmId: 'demo', estado: profileMode === 'old' ? 'faltan_datos' : 'cumple', esDemostracion: profileMode !== 'old',
       versionCriterios: 'perfil-base-1.0', fechaEvaluacion: '2026-09-23T12:00:00Z',
@@ -39,6 +46,17 @@ const share = JSON.parse(execFileSync('venv/Scripts/python.exe', ['-c',
     await page.goto('http://127.0.0.1:8010/');
     await page.getByRole('link', { name: 'Conocer Milpa de demostración' }).click();
     await page.locator('#analysis-content:not([hidden])').waitFor();
+    await page.getByRole('button', { name: 'Reintentar entorno', exact: true }).waitFor();
+    bufferMode = 'full';
+    await page.getByRole('button', { name: 'Reintentar entorno', exact: true }).click();
+    await page.locator('.buffer-zone').waitFor();
+    assert.match(await page.locator('.buffer-zone').getAttribute('style'), /buffer-hatching/);
+    assert.equal(await page.locator('#buffer-hatching rect').count(), 2);
+    await page.getByRole('checkbox', { name: 'Mostrar entorno de 500 m' }).uncheck();
+    assert.equal(await page.locator('.buffer-zone').isVisible(), false);
+    await page.getByRole('checkbox', { name: 'Mostrar entorno de 500 m' }).check();
+    await page.locator('.buffer-zone').waitFor();
+    assert.equal(await page.locator('#buffer-hatching').count(), 1);
     await page.locator('#seal-content:not([hidden])').waitFor();
     assert.equal(await page.locator('#seal-status').textContent(), 'Nivel I Base · Perfil documentado');
     assert.match(await page.locator('#seal-demo').textContent(), /Caso de demostración/);

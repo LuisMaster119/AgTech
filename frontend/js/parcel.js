@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
       MapModule.map.invalidateSize();
       MapModule.map.fitBounds(polygon.getBounds(), { padding: [35, 35], maxZoom: 17 });
       text('map-status', 'Polígono registrado de la parcela.');
+      if (!document.querySelector('.buffer-controls')) BufferView.init(farmId);
     } catch (error) {
       text('map-status', 'No pudimos mostrar el mapa o la geometría. El resto de la información sigue disponible.');
     }

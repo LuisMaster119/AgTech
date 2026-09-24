@@ -28,6 +28,14 @@ thead { background: #eef2e8; }
 #seal-status { font-weight: 700; }
 #seal-criteria, #seal-pending { padding-left: 22px; line-height: 1.9; }
 .report-heading { display: none; }
+.buffer-controls { margin-bottom: 15px; font-size: 13px; }
+.buffer-controls label { display: inline-flex; align-items: center; gap: 8px; }
+.buffer-controls input[type="checkbox"] { width: 18px; height: 18px; margin: 0; padding: 0; accent-color: #116c4a; }
+.buffer-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 12px; }
+.buffer-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.buffer-legend i { display: inline-block; width: 28px; height: 18px; border-radius: 3px; }
+.parcel-swatch { background: #116c4a; border: 2px solid #a1f4c8; }
+.buffer-swatch { background: repeating-linear-gradient(45deg, #f6d795, #f6d795 5px, #c78b2c 5px, #c78b2c 8px); border: 1px dashed #c78b2c; }
 .report-share { margin-bottom: 40px; overflow-wrap: anywhere; }
 #profile-qr { display: block; background: white; margin-block: 15px; }
 #profile-url { display: block; overflow-wrap: anywhere; }

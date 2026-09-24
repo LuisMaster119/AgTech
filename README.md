@@ -31,6 +31,13 @@ real del mapa depende del acceso a los servicios externos.
 
 ### Micrositio público
 
+El mapa muestra el entorno de 500 m en ámbar con rayas diagonales, leyenda y
+control para ocultarlo. `GET /farms/{farm_id}/buffer` consulta la geometría anular
+en Earth Engine con las mismas operaciones del análisis, sin ejecutarlo ni escribir
+resultados. Requiere la configuración de Earth Engine existente. Ante un fallo
+permite reintentar y mantiene disponible el perfil. No representa límites de
+propiedad ni una restricción territorial. Los índices y el buffer del motor no cambian.
+
 Cada tarjeta enlaza a `/parcela.html?id=<farmId>`, accesible directamente y al
 recargar. Consulta el perfil mediante `GET /farms/{farm_id}` y muestra historia,
 productor, actividad, ubicación y polígono. No requiere sesión.
