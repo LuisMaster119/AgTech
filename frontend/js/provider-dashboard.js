@@ -11,10 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return element;
   }
   function card(farm) {
-    const details = node('details', null, 'provider-farm');
+    const article = node('article', null, 'provider-farm');
+    const details = node('details', null, 'provider-farm-details');
     const summary = node('summary');
     summary.append(node('span', farm.nombre, 'provider-farm-name'));
-    summary.append(node('span', 'Ver información', 'expand-label'));
+    const label = node('span', 'Mostrar información', 'expand-label');
+    summary.append(label);
+    details.addEventListener('toggle', () => { label.textContent = details.open ? 'Ocultar información' : 'Mostrar información'; });
     const body = node('div', null, 'provider-farm-body');
     const dl = node('dl');
     for (const [label, value] of [['Productor', farm.productor], ['Actividad económica', farm.actividadEconomica],
@@ -27,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     link.href = `/parcela.html?id=${encodeURIComponent(farm.farmId)}&vista=proveedor`;
     body.append(link);
     details.append(summary, body);
-    return details;
+    article.append(details, ParcelPreview.create(farm));
+    return article;
   }
   async function load() {
     const current = ++generation;

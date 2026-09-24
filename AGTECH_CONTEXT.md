@@ -17,6 +17,17 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Fotos del proveedor — 24 de septiembre de 2026: las tarjetas de Mis parcelas
+reutilizan ParcelPreview con imagen satelital y polígono a la derecha, sin buffer.
+«Mostrar información» aparece pequeño bajo el nombre y cambia a «Ocultar
+información» al desplegar. Se conserva el acceso por teclado, los datos, el enlace
+al perfil con vista=proveedor y la sesión existente. La imagen permanece a la
+derecha en móvil; contempla geometría ausente y fallos del servicio.
+Verificado: prueba Edge de escritorio/móvil con datos e imágenes simulados,
+posición, desplegado por clic/teclado, errores, navegación, sesión vencida y sin
+peticiones de buffer/análisis ni escrituras; tres pruebas de ParcelPreview,
+sintaxis y capturas revisadas. No cambia backend ni análisis ambiental.
+
 Fotos del catálogo — 24 de septiembre de 2026: se retira la sección «Una mirada
 al territorio», su enlace y los botones «Ver en mapa». Cada tarjeta incorpora
 una imagen estática de Esri World Imagery, encuadrada en la geometría propia,
