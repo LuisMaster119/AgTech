@@ -17,6 +17,11 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Ajuste de espaciado del proveedor — 24 de septiembre de 2026: la columna de
+datos comienza más a la izquierda y reserva espacio adicional antes de la imagen.
+Se conserva la distribución móvil. Verificado con la prueba de navegador del
+dashboard y revisión de captura de escritorio; sin cambios de comportamiento.
+
 Tarjetas directas del proveedor — 24 de septiembre de 2026: reemplazan el
 desplegable anterior por nombre, actividad económica/municipio/estado/país en
 la columna central e imagen a la derecha. «Ver parcela» sustituye «Mostrar
