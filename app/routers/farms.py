@@ -10,6 +10,9 @@ from app.config import settings
 from app.services.sharing import profile_share
 from app.services.buffer_view import get_buffer_geometry
 from app.models.farm import FarmCreate, FarmResponse
+from app.models.provider import Provider
+from app.routers.auth import optional_provider
+from app.services.visibility import no_store, require_visible_or_owner
 from app.models.seal import SealEvaluation
 from app.services.seals import evaluate_profile
 from app.models.analysis import (
@@ -28,7 +31,7 @@ from app.services.geocoding import enrich_location
 
 logger = logging.getLogger("agtech.routers.farms")
 
-router = APIRouter(prefix="/farms", tags=["Granjas y Análisis"])
+router = APIRouter(prefix="/farms", tags=["Granjas y Análisis"], dependencies=[Depends(no_store)])
 
 
 @router.post(
@@ -90,7 +93,7 @@ async def list_farms(
         docs = list(db.collection("farms").stream())
         docs.sort(key=lambda d: d.to_dict().get("fechaCreacion", ""), reverse=True)
 
-    farms = [FarmResponse(**d.to_dict()) for d in docs if d.exists]
+    farms = [FarmResponse(**d.to_dict()) for d in docs if d.exists and d.to_dict().get("visible", True) is not False]
     return farms
 
 
@@ -102,7 +105,7 @@ async def list_farms(
 )
 async def get_farm(
     farm_id: str,
-    db: firestore.Client = Depends(get_db)
+    provider: Provider | None = Depends(optional_provider), db: firestore.Client = Depends(get_db)
 ):
     doc_ref = db.collection("farms").document(farm_id)
     doc = doc_ref.get()
@@ -111,17 +114,19 @@ async def get_farm(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Granja con ID '{farm_id}' no encontrada."
         )
+    require_visible_or_owner(doc.to_dict(), provider)
     return FarmResponse(**doc.to_dict())
 
 
 @router.get("/{farm_id}/buffer", summary="Consultar geometría del entorno de 500 m")
-def get_farm_buffer(farm_id: str, db: firestore.Client = Depends(get_db)):
+def get_farm_buffer(farm_id: str, provider: Provider | None = Depends(optional_provider), db: firestore.Client = Depends(get_db)):
     try:
         doc = db.collection('farms').document(farm_id).get()
     except Exception:
         raise HTTPException(status_code=503, detail='No se pudo consultar la parcela.')
     if not doc.exists:
         raise HTTPException(status_code=404, detail='Parcela no encontrada.')
+    require_visible_or_owner(doc.to_dict(), provider)
     try:
         geometry = get_buffer_geometry(doc.to_dict().get('geojson') or {})
     except Exception:
@@ -131,19 +136,20 @@ def get_farm_buffer(farm_id: str, db: firestore.Client = Depends(get_db)):
 
 
 @router.get("/{farm_id}/share", summary="Consultar enlace y QR del perfil público")
-async def get_farm_share(farm_id: str, request: Request, db: firestore.Client = Depends(get_db)):
+async def get_farm_share(farm_id: str, request: Request, provider: Provider | None = Depends(optional_provider), db: firestore.Client = Depends(get_db)):
     try:
         doc = db.collection("farms").document(farm_id).get()
     except Exception:
         raise HTTPException(status_code=503, detail="No se pudo consultar el enlace público.")
     if not doc.exists:
         raise HTTPException(status_code=404, detail="Parcela no encontrada.")
+    require_visible_or_owner(doc.to_dict(), provider)
     return profile_share(str(settings.PUBLIC_BASE_URL or request.base_url), farm_id)
 
 
 @router.get("/{farm_id}/seal", response_model=SealEvaluation,
             summary="Consultar evaluación preliminar del perfil")
-async def get_farm_seal(farm_id: str, db: firestore.Client = Depends(get_db)):
+async def get_farm_seal(farm_id: str, provider: Provider | None = Depends(optional_provider), db: firestore.Client = Depends(get_db)):
     try:
         doc = db.collection("farms").document(farm_id).get()
     except Exception:
@@ -151,6 +157,7 @@ async def get_farm_seal(farm_id: str, db: firestore.Client = Depends(get_db)):
         raise HTTPException(status_code=503, detail="No se pudo consultar la evaluación.")
     if not doc.exists:
         raise HTTPException(status_code=404, detail="Parcela no encontrada.")
+    require_visible_or_owner(doc.to_dict(), provider)
     return evaluate_profile(farm_id, doc.to_dict())
 
 
@@ -164,7 +171,7 @@ async def get_farm_seal(farm_id: str, db: firestore.Client = Depends(get_db)):
 async def analyze_farm(
     farm_id: str,
     request: Optional[AnalyzeRequest] = None,
-    db: firestore.Client = Depends(get_db)
+    provider: Provider | None = Depends(optional_provider), db: firestore.Client = Depends(get_db)
 ):
     # 1. Verificar existencia de la granja
     doc_ref = db.collection("farms").document(farm_id)
@@ -176,6 +183,7 @@ async def analyze_farm(
         )
     
     farm_data = farm_doc.to_dict()
+    require_visible_or_owner(farm_data, provider)
     farm_geojson = farm_data.get("geojson")
 
     periodo_rec = request.periodoReciente if request else None
@@ -244,7 +252,7 @@ async def analyze_farm(
 )
 async def get_farm_certificate(
     farm_id: str,
-    db: firestore.Client = Depends(get_db)
+    provider: Provider | None = Depends(optional_provider), db: firestore.Client = Depends(get_db)
 ):
     # 1. Verificar si la granja existe
     farm_doc = db.collection("farms").document(farm_id).get()
@@ -254,6 +262,7 @@ async def get_farm_certificate(
             detail=f"Granja con ID '{farm_id}' no encontrada."
         )
     farm_data = farm_doc.to_dict()
+    require_visible_or_owner(farm_data, provider)
     farm_nombre = farm_data.get("nombre", "Granja")
 
     # 2. Consultar el análisis más reciente para esta granja

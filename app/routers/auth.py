@@ -33,6 +33,15 @@ def require_demo_enabled():
         raise HTTPException(503, "El acceso de demostración está desactivado.")
 
 
+def optional_provider(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)) -> Provider | None:
+    if not credentials or not settings.DEMO_AUTH_ENABLED:
+        return None
+    try:
+        return require_provider(credentials)
+    except HTTPException:
+        return None
+
+
 def require_provider(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)) -> Provider:
     require_demo_enabled()
     with _lock:

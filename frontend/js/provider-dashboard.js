@@ -18,6 +18,35 @@ document.addEventListener('DOMContentLoaded', () => {
     link.href = `/parcela.html?id=${encodeURIComponent(farm.farmId)}&vista=proveedor`;
     title.append(link);
     heading.append(title, node('span', 'Ver parcela', 'provider-farm-hint'));
+    const visibility = node('button', null, 'button outline visibility-toggle');
+    visibility.type = 'button';
+    const visibilityStatus = node('p', null, 'visibility-status');
+    visibilityStatus.setAttribute('role', 'status');
+    let visible = farm.visible !== false;
+    function showVisibility() {
+      visibility.textContent = visible ? 'Ocultar parcela' : 'Mostrar parcela';
+      visibility.setAttribute('aria-label', `${visible ? 'Ocultar' : 'Mostrar'} ${farm.nombre}`);
+      visibilityStatus.textContent = visible ? 'Visible al público' : 'Oculta al público';
+    }
+    showVisibility();
+    visibility.addEventListener('click', async () => {
+      if (visibility.disabled) return;
+      visibility.disabled = true;
+      visibilityStatus.textContent = 'Guardando visibilidad…';
+      try {
+        const result = await ProviderAuth.request(`/providers/me/farms/${encodeURIComponent(farm.farmId)}/visibility`, 'PATCH', { visible: !visible });
+        visible = result.visible;
+        showVisibility();
+      } catch (error) {
+        if (error.status === 401) {
+          document.getElementById('provider-content').hidden = true;
+          window.location.replace('/acceso.html');
+          return;
+        }
+        visibilityStatus.textContent = 'No pudimos confirmar el cambio. Recarga Mis parcelas antes de reintentar.';
+      } finally { visibility.disabled = false; }
+    });
+    heading.append(visibility, visibilityStatus);
     const info = node('dl', null, 'provider-farm-info');
     for (const [label, value] of [['Actividad económica', farm.actividadEconomica],
       ['Municipio', farm.municipio], ['Estado', farm.estado], ['País', farm.pais]]) {

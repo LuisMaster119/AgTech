@@ -7,13 +7,33 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from google.cloud import firestore
 
 from app.database import get_db
-from app.models.farm import FarmCreate, FarmResponse
+from app.models.farm import FarmCreate, FarmResponse, FarmVisibilityUpdate
 from app.models.provider import Provider
 from app.routers.auth import require_provider
 from app.services.geocoding import enrich_location
 
 router = APIRouter(prefix="/providers/me", tags=["Parcelas del proveedor"])
 logger = logging.getLogger(__name__)
+
+
+@router.patch("/farms/{farm_id}/visibility", response_model=FarmResponse)
+def update_visibility(farm_id: str, update: FarmVisibilityUpdate, response: Response,
+                      provider: Provider = Depends(require_provider), db: firestore.Client = Depends(get_db)):
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        ref = db.collection("farms").document(farm_id)
+        doc = ref.get()
+        data = doc.to_dict() if doc.exists else None
+        if not data or data.get("providerId") != provider.providerId:
+            raise HTTPException(404, "Parcela no encontrada.")
+        # Impide cambiar una parcela cuya propiedad/version haya cambiado tras la lectura.
+        ref.update({"visible": update.visible}, option=firestore.LastUpdateOption(doc.update_time))
+        return FarmResponse(**{**data, "visible": update.visible})
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("No se pudo actualizar la visibilidad")
+        raise HTTPException(503, "No se pudo confirmar el cambio de visibilidad. Recarga Mis parcelas.")
 
 
 @router.post("/farms", response_model=FarmResponse, status_code=201)

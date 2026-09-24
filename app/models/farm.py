@@ -84,6 +84,7 @@ class FarmCreate(FarmProfile):
 
 
 class FarmResponse(FarmProfile):
+    visible: bool = True
     # Lista explícita de campos públicos; providerId y datos internos se excluyen.
     esDemostracion: bool = False
     ubicacionAtribucion: str | None = None
@@ -91,3 +92,7 @@ class FarmResponse(FarmProfile):
     nombre: str = Field(..., description="Nombre de la granja")
     geojson: Dict[str, Any] = Field(..., description="Geometría GeoJSON del polígono")
     fechaCreacion: str = Field(..., description="Fecha y hora de registro en formato ISO 8601")
+
+
+class FarmVisibilityUpdate(BaseModel):
+    visible: bool = Field(strict=True)

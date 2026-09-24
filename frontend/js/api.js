@@ -48,8 +48,9 @@ const API = {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
     try {
+      const token = window.ProviderAuth?.token();
       const response = await fetch(`${API_BASE}${path}`, {
-        method: 'GET', headers: { Accept: 'application/json' }, signal: controller.signal
+        method: 'GET', cache: 'no-store', headers: { Accept: 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, signal: controller.signal
       });
       if (!response.ok) {
         const error = new Error('No se pudo consultar la información pública');

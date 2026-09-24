@@ -17,6 +17,25 @@
 
 ### Punto de continuación — 23 de septiembre de 2026
 
+Visibilidad de parcelas — 24 de septiembre de 2026: Mis parcelas incorpora
+«Ocultar parcela» / «Mostrar parcela» y estado público, independiente del enlace
+de la tarjeta. PATCH /providers/me/farms/{id}/visibility exige sesión, propiedad
+y booleano estricto; persiste solo visible con precondición de versión.
+Los registros antiguos y nuevos sin ese campo continúan visibles por defecto.
+Ocultar retira la parcela de GET /farms y devuelve 404 a visitantes u otros
+productores en perfil, certificado/análisis, criterios, QR, buffer y ejecución.
+El productor propietario conserva consulta y ejecución mediante su sesión; el
+cliente del micrositio envía esa sesión a sus lecturas. Respuestas sin caché.
+No se modifica ningún cálculo ambiental ni se borran datos al ocultar.
+La autenticación sigue siendo demo compartida: no equivale a privacidad real
+entre personas que conocen las credenciales demo. No se implementó autenticación
+de producción ni borrado desde la interfaz.
+Verificación: 58 pruebas Python (DB/servicios simulados), navegador de catálogo y
+dashboard (mostrar/ocultar, recarga, errores, navegación, móvil), sintaxis y diff.
+El servidor local ya publica el endpoint nuevo; el catálogo real tiene cuatro
+parcelas y no incluye El Aguacate. No se cambió visibilidad de registros reales
+durante las pruebas; la única escritura real fue el borrado solicitado abajo.
+
 Eliminación solicitada — 24 de septiembre de 2026: se eliminó de Firestore
 ag-tech la parcela «El Aguacate», ID 350b8a26-e16e-42aa-ac8c-0c2e1829265e.
 Se verificó coincidencia única, productor demo y ausencia de análisis asociados;

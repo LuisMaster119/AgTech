@@ -25,6 +25,8 @@
 .provider-farm-info dd { margin: 2px 0 0; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
 .provider-farm .parcel-preview { border-radius: 10px; width: 100%; }
 .provider-farm .preview-attribution { z-index: 2; }
+.visibility-toggle { position: relative; z-index: 2; margin-top: 16px; font-size: 11px; padding: 8px 12px; }
+.visibility-status { margin: 6px 0 0; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
 #farms-status { color: var(--muted); }
 .provider-analysis { border-top: 1px solid var(--border); margin-top: 24px; padding-top: 12px; overflow-wrap: anywhere; }
 .provider-analysis-result { color: var(--primary); }

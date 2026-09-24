@@ -32,6 +32,7 @@ def test_share_endpoint_read_only(monkeypatch):
     db = MagicMock()
     doc = db.collection.return_value.document.return_value.get.return_value
     doc.exists = True
+    doc.to_dict.return_value = {}
     app.dependency_overrides[get_db] = lambda: db
     monkeypatch.setattr(settings, 'PUBLIC_BASE_URL', None)
     try:
@@ -47,7 +48,7 @@ def test_share_endpoint_read_only(monkeypatch):
             response = client.get('/farms/demo/share')
             assert response.status_code == 503
             assert 'credentials' not in response.text
-            doc.to_dict.assert_not_called()
+            assert doc.to_dict.call_count == 2  # Comprueba visibilidad antes de generar el QR.
             db.collection.return_value.document.return_value.set.assert_not_called()
     finally:
         app.dependency_overrides.clear()
